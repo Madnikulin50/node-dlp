@@ -1,0 +1,27 @@
+{
+  "name": "open-dlp",
+  "description": "Opensource DLP",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ashleygwilliams/my_package.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ashleygwilliams/my_package/issues"
+  },
+  "homepage": "https://github.com/ashleygwilliams/my_package",
+  "dependencies": {
+    "express": "^4.15.2",
+    "http-mitm-proxy": "^0.5.2",
+    "imap": "^0.8.19",
+    "jsdb": "^1.0.3",
+    "node-schedule": "^1.2.1"
+  }
+}
