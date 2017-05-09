@@ -1,0 +1,4 @@
+config
+node_modules
+tmp_agents
+tmp_audit

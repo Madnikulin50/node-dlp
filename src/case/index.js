@@ -1,5 +1,6 @@
 var fs = require('fs');
 var path = require('path');
+var crypto = require('crypto')
 
 const params_fn = '.params';
 const body_fn = '.body';
@@ -11,7 +12,7 @@ class Case
     {
         this.channel = 'undefined';
         this.agent = 'undefined';
-        this.id  = 0;// TODO: Сгенерировать новый id
+		this.id = crypto.randomBytes(48).toString('hex');
     }
 
     static load(in_Path)
@@ -34,16 +35,26 @@ class Case
         storeParams();
     }
 
+	isRulePresent(in_Rule)
+	{
+		return this.rules.indexOf(in_Rule) !== -1;
+	}
+
     storeParams()
     {
         fs.writeFile(path.join(this._folder, params_fn), JSON.stringify(this, '\t'), 'utf8');
     }
 
+	getParams()
+	{
+		
+	}
+
 
     setParams(in_Params)
     {
         Object.assign(this, in_Params);
-        storeParams();
+        this.storeParams();
     } 
 
     setFolder(in_Folder)
@@ -62,6 +73,11 @@ class Case
     {
         fs.readFile(path.join(this._folder, body_fn), in_Callback);
     }
+
+	getBodyStream()
+	{
+		return fs.createReadStream(path.join(this._folder, body_fn));
+	}
 
     pushAttachment(in_Path, in_Filename, in_Callback)
     {
