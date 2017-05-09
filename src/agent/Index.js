@@ -16,6 +16,12 @@ class Agent
     {
 
     }
+	makeAudit(in_Case)
+	{
+		
+		var audit = require('../audit').get();
+		return audit.execute(in_Case);
+	}
     
     static createAgentManager(in_Options)
     {
