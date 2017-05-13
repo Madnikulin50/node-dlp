@@ -1,11 +1,16 @@
 var fs = require('fs');
 var path = require('path');
 
+let singleton = null;
 class Options
 {
     constructor(in_Path)
     {
-        this._config_folder = in_Path;
+		if (singleton)
+			return singleton;
+		singleton = this;
+        singleton._config_folder = in_Path;
+		return this;
     }
 
     load(path)
@@ -30,6 +35,13 @@ class Options
     get audit()
     {
         let fn = path.join(this._config_folder, 'audit.json');
+        let opt = fs.existsSync(fn) ? require(fn) : {};
+        return opt;
+    }
+
+	get store()
+    {
+        let fn = path.join(this._config_folder, 'store.json');
         let opt = fs.existsSync(fn) ? require(fn) : {};
         return opt;
     }

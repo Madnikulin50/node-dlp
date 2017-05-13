@@ -42,7 +42,14 @@ class IMAP4_Agent extends Email_Sheduled_Agent
       					msg.on('body', function(stream, info) 
 						{
 							console.log(prefix + 'Body');
-							stream.pipe(fs.createWriteStream(path.join(this.tmp_fld, 'msg-' + seqno + '-body.eml')));
+							let fn = path.join(this.tmp_fld, 'msg-' + seqno + '-body.eml');
+							let write_stream = fs.createWriteStream(fn);
+							write_stream.write('X-Node-DLP-Agent:IMAP4\r\n');
+							write_stream.on('close', function()
+							{
+								this.makeCaseFromEml(fn);
+							}.bind(this));
+							stream.pipe(write_stream);
 						}.bind(this));
 						msg.once('attributes', function(attrs) 
 						{

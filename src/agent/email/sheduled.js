@@ -1,4 +1,4 @@
-var Email_Agent = require('../index.js');
+var Email_Agent = require('./index.js');
 var schedule = require('node-schedule');
 
 
@@ -13,6 +13,7 @@ class Email_Sheduled_Agent extends Email_Agent
     start(in_Params, in_Callback)
     {
         this._job = schedule.scheduleJob(this.shedule, this.do.bind(this));
+		super.start();
     }
 
     stop(in_Params, in_Callback)

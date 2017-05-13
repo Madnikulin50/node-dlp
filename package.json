@@ -1,6 +1,6 @@
 {
-  "name": "open-dlp",
-  "description": "Opensource DLP",
+  "name": "node-dlp",
+  "description": "Data Leak Prevension for Node.js",
   "version": "0.0.1",
   "main": "index.js",
   "scripts": {
@@ -8,20 +8,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ashleygwilliams/my_package.git"
+    "url": "https://github.com/Madnikulin50/node-dlp.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ashleygwilliams/my_package/issues"
+    "url": "https://github.com/Madnikulin50/node-dlp/issues"
   },
-  "homepage": "https://github.com/ashleygwilliams/my_package",
+  "homepage": "https://github.com/Madnikulin50/node-dlp",
   "dependencies": {
     "express": "^4.15.2",
+    "gridfs-stream": "^1.1.1",
     "http-mitm-proxy": "^0.5.2",
     "imap": "^0.8.19",
     "jsdb": "^1.0.3",
+    "mailparser": "^2.0.5",
+    "mongodb": "^2.2.26",
+    "mongoose": "^4.9.8",
+    "mongoose-gridfs": "^0.1.0",
     "node-schedule": "^1.2.1"
   }
 }
