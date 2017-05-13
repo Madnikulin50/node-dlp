@@ -9,7 +9,7 @@
     [
         {
             "type":"email/imap4",
-            "enabled":true,
+            "enabled":false,
             "server":"imap.mail.ru",
             "port":993,
             "tls":true,

@@ -47,14 +47,19 @@ class Email_Agent extends Agent
 				var params =
 				{
 					date: mail.date,
-					from: mail.from.text,
-					to: mail.to.text,
+					from: mail.from !== undefined ? mail.from.text : undefined,
+					to: mail.to !== undefined ? mail.to.text : undefined,
+
 					subject: mail.subject,
 					messageId: mail.messageId,
+					channel:'email'					 
 				};
+				if (mail.headers['x-node-dlp-agent'] !== undefined)
+					params.agent = mail.header['x-node-dlp-agent']
 				new_case.setParams(params);
 				new_case.setBody(mail.text);
-				fs.unlink(in_File);
+			
+				fs.unlink(in_File, (err)=>{ console.log(err);});
 				this.makeAudit(new_case);
 			});
 		}

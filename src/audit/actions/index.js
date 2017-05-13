@@ -2,7 +2,7 @@ var path = require("path");
 
 class Action
 {
-	constructor(in_Action_Options, in_Audit_Options)
+	constructor(in_Action_Options)
 	{
 		Object.assign(this, in_Action_Options);
 		return this;
@@ -26,7 +26,8 @@ class Action
 	{
 		console.log("Executed " + this.type + " action " + (this.name !== undefined ? this.name : "(noname)"));
 		var result = {block:false};
-		in_Callback(null, result);
+		if (in_Callback)
+			in_Callback(null, result);
 		return result;
 	}
 
