@@ -12,7 +12,8 @@ class Email_Sheduled_Agent extends Email_Agent
 
     start(in_Params, in_Callback)
     {
-        this._job = schedule.scheduleJob(this.shedule, this.do.bind(this));
+		if (this.enabled)
+        	this._job = schedule.scheduleJob(this.shedule, this.do.bind(this));
 		super.start();
     }
 
