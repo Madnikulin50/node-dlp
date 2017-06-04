@@ -27,7 +27,13 @@
             "user":"nikulin_m_v@mail.ru",
             "pass":"Zse4oe3014n",
             "shedule":"*/5 * * * *"
+        },
+        {
+            "type":"web/proxy",
+            "enabled":true,
+            "port":8081
         }
+
 
     ]
 }

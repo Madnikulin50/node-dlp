@@ -48,12 +48,17 @@ class Audit
 		});
 	}
 
-    execute(in_Case)
+    execute(in_Case, in_Callback = (err) => { if (err) throw err; } )
     {
+		let err = null;
+		let result = {};
 		this.actions.forEach((element)=>
 		{
 			element.do(in_Case);
 		});
+		if (in_Callback)
+			in_Callback(err, result);
+		
     }
 
     executeOnDB()

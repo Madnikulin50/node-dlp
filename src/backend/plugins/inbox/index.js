@@ -62,7 +62,7 @@ module.exports = function(in_Options, in_Backend)
 			}
 			
 
-			collection.find(query).sort({date: 1}).skip(start).limit(start + 100).toArray((err, items) => {
+			collection.find(query).sort({date: -1}).skip(start).limit(start + 100).toArray((err, items) => {
 				if (err) {
 					res.send(400);
 					return;
