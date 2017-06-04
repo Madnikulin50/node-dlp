@@ -4,7 +4,7 @@ class Agent
 {
     constructor(in_Options)
     {
-
+		Object.assign(this, in_Options);
     }
 
     start(in_Params, in_Callback)
@@ -16,7 +16,7 @@ class Agent
     {
 
     }
-	makeAudit(in_Case)
+	makeAudit(in_Case, in_Callback)
 	{
 		
 		var audit = require('../audit').get();
@@ -28,6 +28,8 @@ class Agent
         var Agent_Manager = require('./manager.js'); 
         return new Agent_Manager(in_Options);
     }
+	
+	
 };
 
 module.exports = Agent;
