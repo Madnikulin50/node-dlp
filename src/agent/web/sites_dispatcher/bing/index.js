@@ -12,6 +12,11 @@ class Bing_Dispatcher extends Base_Dispatcher
 		super(in_Options);
 	}
 
+	get service()
+	{
+		return 'Bing';
+	}
+
 	isMine(in_Packet)
 	{
 		let host = in_Packet.host;
@@ -22,10 +27,9 @@ class Bing_Dispatcher extends Base_Dispatcher
 		
 		if (in_Packet.isLikeGet)
 		{
-			if (in_Packet.query.q !== undefined &&
-				in_Packet.pathName === '/search')
-				return true;
-			if (in_Packet.query.bq !== undefined)
+			if (in_Packet.pathName === '/search' &&
+				(in_Packet.query.q !== undefined ||
+				in_Packet.query.bq !== undefined))
 				return true;
 		}
 		return false;
@@ -36,24 +40,10 @@ class Bing_Dispatcher extends Base_Dispatcher
 		let packet = in_Params.packet;
 		if (packet.isLikeGet)
 		{
-			if (packet.query.q !== undefined
-			|| packet.query.bq !== undefined)
-			{
-				let query = packet.query.q;
-				if (query === undefined)
-					query = packet.query.bq;
-
-				let cs = this.createCase(in_Params);
-				let params =
-				{
-					subject: packet.query.bq === undefined ? "Search" : "Fast search",
-				};
-				cs.setParams(params);
-				cs.setBody(query, err => {
-					this.finishCaseSimple(in_Params, cs, in_CB);
-				});
-				return;
-			}
+			if (packet.query.q !== undefined)
+				return super.createSearchCase(in_Params, packet.query.q, in_CB);
+			if (packet.query.bq !== undefined)
+				return super.createSearchCase(in_Params, packet.query.bq, in_CB);
 		}
 		return super.process(in_Params, in_CB);
 	}

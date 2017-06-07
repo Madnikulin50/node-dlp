@@ -6,6 +6,10 @@ class Agent
     {
 		Object.assign(this, in_Options);
     }
+	
+	get name() {
+		return 'unknown';
+	}
 
     start(in_Params, in_Callback)
     {

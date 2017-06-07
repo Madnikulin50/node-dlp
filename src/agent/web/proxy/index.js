@@ -13,6 +13,10 @@ class Proxy_Agent extends Web_Agent
 		this.seqno = 0;
 	}
 
+	get name() {
+		return 'proxy';
+	}
+
 	start()
 	{
 		super.start();

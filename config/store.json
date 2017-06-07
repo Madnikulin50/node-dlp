@@ -1,8 +1,21 @@
 {
-    
-	"container": "elems",
-	"db":"incidents",
-	"server":"127.0.0.1",
-	"port":27017
+	"active":"mongo",
+    "mongo":
+	{
+		"type":"mongo",
+		"container": "elems",
+		"db":"incidents",
+		"server":"127.0.0.1",
+		"port":27017
+	},
+	"postgres":
+	{
+		"type":"pg",
+		"host": "localhost",
+    	"port": 5432,
+    	"database": "my-database-name",
+    	"user": "postgres",
+    	"password": "oe3014n"
+	}
     
 }

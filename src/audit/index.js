@@ -26,7 +26,7 @@ class Audit
 		let audit_opts = in_Options.audit;
 		audit_opts.actions.forEach((element)=>
 		{
-			let action = require(__dirname + '/actions/' + element.type + '.js');
+			let action = require(__dirname + '/actions/' + element.type);
 			this.actions.push(new action(element));
 		});
 

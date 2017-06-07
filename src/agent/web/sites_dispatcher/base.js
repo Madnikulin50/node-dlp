@@ -7,7 +7,12 @@ class Base_Dispatcher
 	{
 		Object.assign(this, in_Options);
 	}
-	get serviceName()
+
+	get priority() {
+		return 127;
+	}
+
+	get service()
 	{
 		return 'unknown';
 	}
@@ -17,15 +22,17 @@ class Base_Dispatcher
 		return false;
 	}
 
-	fillCase(in_Packet, in_Case)
+	fillCase(in_Params, in_Case)
 	{
+		let packet = in_Params.packet;
 		in_Case.setParams({
-			service: this.serviceName,
+			service: in_Params.service || this.service,
 			date: (new Date()).toUTCString(),
-			user: in_Packet.user,
-			src_ip: in_Packet.src_ip,
-			dst_host: in_Packet.host,
-			channel: 'web'
+			user: packet.user,
+			src_ip: packet.src_ip,
+			dst_host: packet.host,
+			channel: 'web',
+			agent: in_Params.agent.name
 		});
 	}
 
@@ -33,7 +40,7 @@ class Base_Dispatcher
 	{
 		let new_case = new Case();
 		new_case.setFolder(path.join(in_Params.agent.audit_fld, new_case.id));
-		this.fillCase(in_Params.packet, new_case);
+		this.fillCase(in_Params, new_case);
 		return new_case;
 	}
 
@@ -59,7 +66,6 @@ class Base_Dispatcher
 
 	processDefaultPost(in_Params, in_CB)
 	{
-
 		let cs = this.createCase(in_Params);
 		let params = 
 		{
@@ -78,6 +84,19 @@ class Base_Dispatcher
 			return this.processDefaultPost(in_Params, in_CB);
 		console.log('Unknown how processv HTTP request ' + packet.method + ' ' + packet.host + packet.url);
 		return false;
+	}
+
+	createSearchCase(in_Params, in_Search, in_CB)
+	{
+		let cs = this.createCase(in_Params);
+		let params =
+		{
+			subject: in_Params.packet.query.bq === undefined ? "Search" : "Fast search",
+		};
+		cs.setParams(params);
+		cs.setBody(in_Search, err => {
+			this.finishCaseSimple(in_Params, cs, in_CB);
+		});
 	}
 };
 
