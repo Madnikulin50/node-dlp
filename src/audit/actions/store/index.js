@@ -1,8 +1,8 @@
-var Action = require('../index.js');
+var After_All_Action = require('../after-all.js');
 var Options = require('../../../options');
 var store_loader  = require('../../../store');
 
-class Store_Action extends Action
+class Store_Action extends After_All_Action
 {
 	constructor(in_Action_Options)
 	{
@@ -20,11 +20,12 @@ class Store_Action extends Action
 		});
 		return this;
 	}
-
-	do(in_Case, in_Callback)
+	doAfterAll(in_Env, in_Callback)
 	{
-		return this._store.doStore(in_Case, in_Callback);
+		return this._store.doStore(in_Env, in_Callback);
 	}
+
+	
 };
 
 module.exports = Store_Action;

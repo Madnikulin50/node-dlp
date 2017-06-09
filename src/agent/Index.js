@@ -1,4 +1,4 @@
-
+var audit = require('../audit');
 
 class Agent
 {
@@ -22,9 +22,9 @@ class Agent
     }
 	makeAudit(in_Case, in_Callback)
 	{
-		
-		var audit = require('../audit').get();
-		return audit.execute(in_Case);
+		return audit.get().execute({
+			case: in_Case
+		}, in_Callback);
 	}
     
     static createAgentManager(in_Options)

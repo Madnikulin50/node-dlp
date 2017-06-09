@@ -152,6 +152,7 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 
 	doStore(in_Params, in_CB)
 	{
+		var cs = in_Params.case;
 		var db = new mongodb.Db(this.db, new mongodb.Server(this.server, this.port));
 		db.open(function (err) 
 		{
@@ -171,12 +172,12 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 				if (file === undefined)
 					return;
 				let collection = db.collection('incidents');
-				let params = Object.assign({}, in_Case);
+				let params = Object.assign({}, cs);
 				params.body = file._id; 
 				collection.insert(params);
 				in_CB(null);
 			});
-			in_Case.getBodyStream().pipe(writestream);
+			cs.getBodyStream().pipe(writestream);
 		});	
 	}
 };

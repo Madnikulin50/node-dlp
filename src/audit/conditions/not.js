@@ -1,15 +1,27 @@
-var Condition = require('../condition.js');
+var Base_Condition = require('./base');
+var creator = require('./index.js');
 
-class Not_Condition extends Condition
+class Not_Condition extends Base_Condition
 {
-    constructor(in_Options)
+    constructor(in_Options, in_Cb)
     {
-        this.condition = this.Condition.create(in_Options.condition);
+		super(in_Options, in_Cb);
+		creator(in_Options.condition, (err, result) => {
+			if (err)
+				return in_Cb(err);
+			this.condition = result;
+			in_Cb(null, this);
+		});
+
     }    
     
-    isSatisfied(in_Case)
+    isSatisfied(in_Env, in_Cb)
     {
-        return !this.condition.isSatisfied(in_Case);
+        return this.condition.isSatisfied(in_Env, (err, result) => {
+			if (err)
+				return in_Cb(err, result);
+			return in_Cb(err, !result);
+		});
     }
 
     executeOnDB()
@@ -18,3 +30,5 @@ class Not_Condition extends Condition
     }
 
 };
+
+module.exports = Not_Condition;

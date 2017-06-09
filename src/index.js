@@ -8,9 +8,14 @@ var opts = new Options(path.join(process.cwd(), 'config'));
 
 var backend = new Backend(opts);
 
-var audit = new Audit(opts);
+var audit = Audit.create(opts, (err) => {
+	
+	if (err)
+		throw err;
+	Agent.createAgentManager(opts);
+});
 
-var agents = Agent.createAgentManager(opts);
+
 
 
 

@@ -82,7 +82,7 @@ class Base_Dispatcher
 		let packet = in_Params.packet;
 		if (packet.isLikePost)
 			return this.processDefaultPost(in_Params, in_CB);
-		console.log('Unknown how processv HTTP request ' + packet.method + ' ' + packet.host + packet.url);
+		console.log('Unknown how process HTTP request ' + packet.method + ' ' + packet.host + packet.url);
 		return false;
 	}
 
