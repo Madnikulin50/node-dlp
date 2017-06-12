@@ -1,6 +1,6 @@
-var After_All_Action = require('../after-all.js');
-var Options = require('../../../options');
-var store_loader  = require('../../../store');
+var After_All_Action = require('./after-all.js');
+var Options = require('../../options');
+var store_loader  = require('../../store');
 
 class Store_Action extends After_All_Action
 {

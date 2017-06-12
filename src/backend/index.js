@@ -1,6 +1,7 @@
 var express = require('express');
 var fs = require('fs');
 var path = require('path');
+var Telegram = require('./telegram');
 
 class Backend
 {
@@ -10,6 +11,12 @@ class Backend
 		this.options = in_Options;
 		this.loadPlugins(in_Options);
 		this.start();
+
+		let backend_opts = this.options.backend;
+		if (backend_opts["telegram-key"])
+		{
+			this.telegram = new Telegram(this.options);
+		}
     }
 
 	loadPlugins(in_Options)

@@ -1,5 +1,5 @@
 {
-	"active":"mongo",
+	"active":"postgres",
     "mongo":
 	{
 		"type":"mongo",
@@ -13,9 +13,11 @@
 		"type":"pg",
 		"host": "localhost",
     	"port": 5432,
-    	"database": "my-database-name",
+    	"database": "incidents",
     	"user": "postgres",
-    	"password": "oe3014n"
+    	"password": "oe3014n",
+		"max": 10,
+  		"idleTimeoutMillis": 30000
 	}
     
 }

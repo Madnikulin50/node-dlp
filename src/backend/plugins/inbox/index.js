@@ -38,7 +38,7 @@ module.exports = function(in_Options, in_Backend)
 			}, (err, data) => {
 				if (err)
 				{
-					res.sendStatus(400, err);
+					return res.sendStatus(400, err);
 				}
 				res.json(data);
 			});
