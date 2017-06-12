@@ -13,6 +13,10 @@ class Proxy_Agent extends Web_Agent
 		this.seqno = 0;
 	}
 
+	get name() {
+		return 'proxy';
+	}
+
 	start()
 	{
 		super.start();
@@ -38,13 +42,22 @@ class Proxy_Agent extends Web_Agent
 				callback();
 				return;
 			}
-
+			console.log('Interesting HTTP request ' + packet.method + ' ' + packet.host + packet.url);
+			
 			this.siteDispatcher.process({
 				packet: packet,
 				agent: this
+			}, (err, result) => {
+				if (result && result.block === true)
+				{
+					if (result.blockReason	!== undefined)
+						ctx.proxyToClientResponse.end(result.blockReason);
+					else
+						ctx.proxyToClientResponse.end('Blocked by node-dlp');
+				}
+				callback();
 			});
-			console.log('Interesting HTTP request ' + packet.method + ' ' + packet.host + packet.url);
-			callback();
+			
 		});
 
 		this.proxy.listen({ port: this.port});

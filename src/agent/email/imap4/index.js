@@ -12,6 +12,10 @@ class IMAP4_Agent extends Email_Sheduled_Agent
         Object.assign(this, in_Options);
     }
 
+	get name() {
+		return 'imap4';
+	}
+
     do()
     {
         console.log("Starting IMAP4 task\nserver - " + this.server + ":" + this.port +  (this.tls ? 'tls' : 'plain') + "\nuser - " + this.user);

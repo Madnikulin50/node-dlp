@@ -11,6 +11,11 @@ class Facebook_Dispatcher extends Base_Dispatcher
 		super(in_Options);
 	}
 
+	get service()
+	{
+		return 'Facebook';
+	}
+
 };
 
 module.exports = Facebook_Dispatcher;

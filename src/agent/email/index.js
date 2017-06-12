@@ -10,6 +10,10 @@ class Email_Agent extends Agent
     {
 		super(in_Options);
     }
+	get name() {
+		return 'unknown email agent';
+	}
+	
 	start()
 	{
 		const testFolder = this.tmp_fld;

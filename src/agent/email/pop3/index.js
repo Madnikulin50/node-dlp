@@ -8,6 +8,9 @@ class POP3_Agent extends Email_Sheduled_Agent
         super(in_Options);
         Object.assign(this, in_Options);
     }
+	get name() {
+		return 'pop3';
+	}
 
     do()
     {

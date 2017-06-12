@@ -22,10 +22,11 @@ class Case
 
     getField(in_Field)
     {
-        if (this[in_Field] !== undefined)
-            return in_Field;
+		let val = this[in_Field];
+        if (val !== undefined)
+            return val;
         if (in_Field === 'body')
-            return fs.readFileSync(path.join(this._folder, body_fn));
+            return fs.readFileSync(path.join(this._folder, body_fn), 'utf8');
         return undefined;
     }
 
@@ -69,10 +70,17 @@ class Case
         fs.writeFile(path.join(this._folder, body_fn), in_String, 'utf8', in_Callback);
     }
 
+	getEncodedBody(in_Encoding, in_Callback)
+    {
+        fs.readFile(path.join(this._folder, body_fn), in_Encoding, in_Callback);
+    }
+
     getBody(in_Callback)
     {
         fs.readFile(path.join(this._folder, body_fn), in_Callback);
     }
+
+	
 
 	getBodyStream()
 	{

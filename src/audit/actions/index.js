@@ -1,25 +1,45 @@
 var path = require("path");
+var async = require("async");
 
 class Action
 {
 	constructor(in_Action_Options)
 	{
 		Object.assign(this, in_Action_Options);
+		
+		if (this.policy !== undefined)
+			this.loadPolicies();
 		return this;
 	}
 
-	isSatisfying(in_Case)
+	loadPolicies()
 	{
-		if (this.rule !== undefined)
-		{
-			for (let rule of this.rule)
-            {
-				if (in_Case.isRulePresent(this.rule[rule]))
-					return true;
-			}
-			return false;
-		}
-		return true;
+		let pol_opts;
+		
+		if (Array.isArray(this.policy))
+			pol_opts = this.policy;
+		else
+			pol_opts = [this.policy];
+		this.policy = [];
+		pol_opts.forEach((policyName) => {
+			this.policy.push(this.audit.findPolicy(policyName));
+		});
+	}
+
+	isSatisfying(in_Env, in_Cb)
+	{
+		if (this.policy === undefined)
+			return in_Cb(null, true);
+		var counter = 0;
+		async.each(this.policy, (pol, callback) => {
+			pol.isSatisfied(in_Env, (err, result) => {
+				if (result)
+					counter++;
+				callback(err, result);
+			});
+		}, (err) => {
+			in_Cb(err, counter > 0);
+		})
 	}
 
 	do(in_Case, in_Callback)

@@ -25,30 +25,27 @@ class Site_Dispatcher
 					return;
 				this.dispatchers.push(new cls(this));
 			});
+
+			this.dispatchers.sort((a, b) => {
+				return a.priority - b.priority;
+			});
 		});
 	}
 
 	isInteresting(in_Packet)
 	{
-		let method = in_Packet.method;
-		let url = in_Packet.url;
-		if (method !== 'POST'
-			&& method !== 'PUT')
-		{
-			if (method !== 'GET')
-				return false;
-			const _interestingGetUrlMasks = 
-			[
-				's=', 'search=', 'q=', 'bq='
-			];
-			for (var i in _interestingGetUrlMasks)
-			{
-				if (url.indexOf(_interestingGetUrlMasks[i]) !== -1)
-					return true;
-			}
+		if (in_Packet.isLikePost)
+			return true;
+		
+		if (!in_Packet.isLikeGet)
 			return false;
+		
+		for (let i in this.dispatchers)
+		{
+			if (this.dispatchers[i].isMine(in_Packet))
+				return true;
 		}
-		return true;
+		return false;
 	
 	}
 	process(in_Params, in_CB = err => { if (err) throw err; })
@@ -60,6 +57,7 @@ class Site_Dispatcher
 				return this.dispatchers[i].process(in_Params, in_CB);
 			}
 		}
+		return in_CB(null, null);
 	}
 }
 
