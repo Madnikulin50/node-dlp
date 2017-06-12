@@ -11,10 +11,18 @@
 	ICAP-server
 	pcap
 
+Отправка уведомлений:
+	Email
+	Telegram
+
 Хранение данных:
 	MongoDB
 	PostgresSQL - в работе
 
+
+Просмотр инцидентов:
+	Web
+	Telegram
 
 
 
