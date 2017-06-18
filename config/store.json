@@ -1,5 +1,5 @@
 {
-	"active":"mongo",
+	"active":"postgres",
     "mongo":
 	{
 		"type":"mongo",

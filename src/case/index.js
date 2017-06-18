@@ -81,6 +81,7 @@ class Case
         fs.readFile(path.join(this._folder, body_fn), in_Callback);
     }
 
+
 	calcMD5()
 	{
 		let buf = JSON.stringify(this);
