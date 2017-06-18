@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
-var crypto = require('crypto')
+var crypto = require('crypto');
+var md5 = require('md5');
 
 const params_fn = '.params';
 const body_fn = '.body';
@@ -79,6 +80,12 @@ class Case
     {
         fs.readFile(path.join(this._folder, body_fn), in_Callback);
     }
+
+	calcMD5()
+	{
+		let buf = JSON.stringify(this);
+		return md5(buf);
+	}
 
 	
 

@@ -32,7 +32,8 @@ class Base_Dispatcher
 			src_ip: packet.src_ip,
 			dst_host: packet.host,
 			channel: 'web',
-			agent: in_Params.agent.name
+			agent: in_Params.agent.name,
+			user_agent: packet.userAgent
 		});
 	}
 

@@ -129,7 +129,7 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 		});
 	}
 
-	getNumUnreadedIncidents(in_Params, in_CB)
+	getNumIncidents(in_Params, in_CB)
 	{
 		connectDb(this, (err, db) => {
 			if (err) {
@@ -137,7 +137,9 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 				return;
 			}
 			var collection = db.collection('incidents'); 
-			var query = {readed:{'$exists': false}};
+			var query = null;
+			if (in_Params.unreaded !== undefined)
+				query = {readed:{'$exists': false}};
 			collection.count(query).then((data) => {
 				if (!data) {
 					in_CB(err);
@@ -161,23 +163,33 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 				in_CB(err);
 				return console.log(err);
 			}
-
-  			var gfs = Grid(db, mongodb);
-			var writestream = gfs.createWriteStream(
-			{
-				filename: '.body.txt'
-			});
-			writestream.on('close', (file)=>
-			{
-				if (file === undefined)
+			var collection = db.collection('incidents'); 
+			let md5 = cs.calcMD5();
+			var query = {'md5': md5};
+			collection.findOne(query).then((item) => {
+				if (item) {
+					in_CB(null);
 					return;
-				let collection = db.collection('incidents');
-				let params = Object.assign({}, cs);
-				params.body = file._id; 
-				collection.insert(params);
-				in_CB(null);
+				}
+
+				var gfs = Grid(db, mongodb);
+				var writestream = gfs.createWriteStream(
+				{
+					filename: '.body.txt'
+				});
+				writestream.on('close', (file)=>
+				{
+					if (file === undefined)
+						return;
+					let collection = db.collection('incidents');
+					let params = Object.assign({}, cs);
+					params.body = file._id; 
+					params.md5 = md5;
+					collection.insert(params);
+					in_CB(null);
+				});
+				cs.getBodyStream().pipe(writestream);
 			});
-			cs.getBodyStream().pipe(writestream);
 		});	
 	}
 };

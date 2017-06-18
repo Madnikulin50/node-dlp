@@ -111,6 +111,12 @@ class Postgres_Store_Dispatcher extends Base_Store_Dispatcher
 		});
 	}
 
+	prepareString(in_String)
+	{
+		var string = in_String.replace("'", "\'");
+		return string;
+	}
+
 	insertFields(in_ID, in_Case, in_CB)
 	{
 		let fields = [];
@@ -127,7 +133,7 @@ class Postgres_Store_Dispatcher extends Base_Store_Dispatcher
 		
 		async.eachSeries(fields, (field, callback) => {
 			this.executeSimpleCommand("select insert_string_ref(" + in_ID 
-				+ ", " + field.field + ", '" + field.value + "');", (err, result) => {
+				+ ", " + field.field + ", '" + this.prepareString(field.value) + "');", (err, result) => {
 				if (err)
 					throw err;
 				callback();
@@ -143,38 +149,76 @@ class Postgres_Store_Dispatcher extends Base_Store_Dispatcher
 		var cs = in_Params.case;
 		this.connect((err, client, done) =>	{
   			if (err)
-			  return in_CB(err);
-			let date = new Date(cs.date);
-			let dateString = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join('-') +
-				' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].join(':');
+			{
+				in_CB(err);
+				return done(err);
+			}
 
-  			client.query("INSERT INTO main (date) values ('" + dateString + "'); select CURRVAL('main_seq')", (err, result) => {
-    			if (err)
-					return in_CB(err);
-				let id = result.rows[0].currval;
-				this.insertFields(id, cs, (err) =>
+			let md5 = cs.calcMD5();
+			this.executeSimpleCommand("select * from main where md5 = '" + md5 + "'", (err, result) => {
+				if (err)
 				{
-    				console.log('New incdent reqistrating on id ' + id);
-					if (cs.channel === 'web' ||
-						cs.channel === 'proxy')
+					in_CB(err);
+					return done(err);
+				}
+				if (result.length > 0)
+				{
+					console.log('Already in store');
+					in_CB(null);
+					return done(null);
+				}
+
+				let date = new Date(cs.date);
+				let dateString = [date.getFullYear(), date.getMonth() + 1, date.getDate()].join('-') +
+					' ' + [date.getHours(), date.getMinutes(), date.getSeconds()].join(':');
+				
+
+				client.query("INSERT INTO main (date) values ('" + dateString + "'); select CURRVAL('main_seq')", (err, result) => {
+					if (err)
 					{
-						if (err)
-							return done(err);
-						this.executeSimpleCommand("insert into net (id, subject) values(" + id + ", '" + cs.subject + "');", (err, result) => {
+						in_CB(err);
+						return done(err);
+					}
+					let id = result.rows[0].currval;
+					this.insertFields(id, cs, (err) =>
+					{
+						console.log('New incdent reqistrating on id ' + id);
+						if (cs.channel === 'web' ||
+							cs.channel === 'proxy')
+						{
 							if (err)
-								return done(err);
-							cs.getEncodedBody('utf8', (err, data) =>
 							{
+								in_CB(err);
+								return done(err);
+							}
+
+							this.executeSimpleCommand("insert into net (id, subject) values(" + id + ", '" + cs.subject + "');", (err, result) => {
 								if (err)
+								{
+									in_CB(err);
 									return done(err);
-								this.executeCommand("insert into blob (id, blob_type, blob) values(" + id + ", 1, $1)", [data], (err, result) => {
+								}
+								cs.getEncodedBody('utf8', (err, data) =>
+								{
 									if (err)
+									{
+										in_CB(err);
 										return done(err);
-									done(err);
+									}
+
+									this.executeCommand("insert into blob (id, blob_type, blob) values(" + id + ", 1, $1)", [data], (err, result) => {
+										if (err)
+										{
+											in_CB(err);
+											return done(err);
+										}
+										in_CB(err);
+										done(err);
+									});
 								});
 							});
-						});
-					}
+						}
+					});
 				});
 			});
 		});
@@ -358,7 +402,7 @@ class Postgres_Store_Dispatcher extends Base_Store_Dispatcher
 		});*/
 	}
 
-	getNumUnreadedIncidents(in_Params, in_CB)
+	getNumIncidents(in_Params, in_CB)
 	{
 		in_CB(null, {count: 0});
 	}

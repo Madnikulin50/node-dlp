@@ -2,6 +2,7 @@ var express = require('express');
 var fs = require('fs');
 var path = require('path');
 var Telegram = require('./telegram');
+var IMAP = require('./imap');
 
 class Backend
 {
@@ -11,6 +12,8 @@ class Backend
 		this.options = in_Options;
 		this.loadPlugins(in_Options);
 		this.start();
+
+		this.imap = new IMAP(in_Options);
 
 		let backend_opts = this.options.backend;
 		if (backend_opts["telegram-key"])

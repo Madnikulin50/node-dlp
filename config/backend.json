@@ -1,4 +1,15 @@
 {
     "portnum":1212,
-	"telegram-key":"324166749:AAGBxJmy9RKdqbf5AUyw1HJ1fuSOcgZMHfw"
+	"telegram-key":"324166749:AAGBxJmy9RKdqbf5AUyw1HJ1fuSOcgZMHfw",
+	"imap":
+	{
+		"portnum":14343,
+		"accounts":
+		[
+			{
+				"user":"node",
+				"pass":"oe3014n"
+			}
+		]
+	}
 }

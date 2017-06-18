@@ -75,7 +75,7 @@ class Audit
 				if (err)
 				{
 					console.log(err);
-					in_CB(err, null);
+					in_CB(null, null);
 					return;
 				}
 

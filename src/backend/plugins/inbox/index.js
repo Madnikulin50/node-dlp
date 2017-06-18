@@ -58,8 +58,8 @@ module.exports = function(in_Options, in_Backend)
 		});
 
 		app.get('/api/get_num_unreaded_incidents.json', (req, res) => {
-			store.getNumUnreadedIncidents({
-
+			store.getNumIncidents({
+				unreaded: true
 			}, (err, data) => {
 				if (err)
 				{
