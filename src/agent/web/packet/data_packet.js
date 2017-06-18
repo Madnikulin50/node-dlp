@@ -1,5 +1,6 @@
 var Base_Packet = require('./base.js');
 var url = require('url');
+var uaParser = require('ua-parser');
 
 class Data_Packet extends Base_Packet
 {
@@ -53,6 +54,11 @@ class Data_Packet extends Base_Packet
 	{
 		return this.method == 'POST' ||
 			this.method === 'PUT';
+	}
+
+	get userAgent()
+	{
+		return uaParser.parse(this._data.incomingMessage.headers['user-agent']);
 	}
 
 };

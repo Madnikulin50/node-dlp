@@ -10,6 +10,14 @@
             "cwd": "${workspaceRoot}",
             "name": "node-dlp",
             "program": "${workspaceRoot}/src/index.js"
+		},
+		{
+			"type": "node",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "name": "Sentiment Generator",
+            "program": "${workspaceRoot}/src/audit/actions/sentiment/generate.js"
 		}
+
 	]
 }

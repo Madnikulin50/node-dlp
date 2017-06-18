@@ -24,6 +24,7 @@
     "imap": "^0.8.19",
     "jsdb": "^1.0.3",
     "mailparser": "^2.0.5",
+    "md5": "^2.2.1",
     "mongodb": "^2.2.26",
     "mongoose": "^4.9.8",
     "mongoose-gridfs": "^0.1.0",
