@@ -1,0 +1,23 @@
+{
+	"active":"mongo",
+    "mongo":
+	{
+		"type":"mongo",
+		"container": "elems",
+		"db":"incidents",
+		"server":"127.0.0.1",
+		"port":27017
+	},
+	"postgres":
+	{
+		"type":"pg",
+		"host": "localhost",
+    	"port": 5432,
+    	"database": "incidents",
+    	"user": "postgres",
+    	"password": "<pass>",
+		"max": 10,
+  		"idleTimeoutMillis": 30000
+	}
+    
+}
