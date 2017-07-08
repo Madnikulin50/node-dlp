@@ -1,0 +1,38 @@
+{
+    "common":
+    {
+        "tmp_fld":"./tmp_agents",
+        "audit_fld":"./tmp_audit"
+    },
+    "agents":
+    [
+        {
+            "type":"email/imap4",
+            "enabled":false,
+            "server":"imap.mail.ru",
+            "port":993,
+            "tls":true,
+            "user":"nikulin_m_v@mail.ru",
+            "pass":"<pass>",
+            "shedule":"*/1 * * * *"
+
+        },
+        {
+            "type":"email/pop3",
+            "enabled":false,
+            "server":"pop3.mail.ru",
+            "port":995,
+            "tls":true,
+            "user":"nikulin_m_v@mail.ru",
+            "pass":"<pass>",
+            "shedule":"*/5 * * * *"
+        },
+        {
+            "type":"web/proxy",
+            "enabled":true,
+            "port":8081
+        }
+
+
+    ]
+}
