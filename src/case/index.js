@@ -7,6 +7,7 @@ const params_fn = '.params';
 const body_fn = '.body';
 const attachments_fld = '.att';
 const attchments_texts_fld = '.att_text';
+
 class Case
 {
     constructor()

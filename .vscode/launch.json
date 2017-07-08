@@ -13,11 +13,11 @@
 		},
 		{
 			"type": "node",
-            "request": "launch",
-            "cwd": "${workspaceRoot}",
-            "name": "Sentiment Generator",
-            "program": "${workspaceRoot}/src/audit/actions/sentiment/generate.js"
-		}
+			"request": "launch",
+			"name": "Site-Grabber",
+			"program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+			"args": ["${workspaceRoot}/test/agent/web/site-grabber/index.js"]
+		},
 
 	]
 }

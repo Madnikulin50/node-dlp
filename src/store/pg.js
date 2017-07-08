@@ -298,6 +298,7 @@ class Postgres_Store_Dispatcher extends Base_Store_Dispatcher
 		}
 
 		query += ', subject from main left join net on main.id = net.id where main.id = ' + id;
+	}
 
 
 	connect(in_CB) {
