@@ -36,6 +36,13 @@ class Proxy_Agent extends Web_Agent
 				incomingMessage: ctx.clientToProxyRequest
 			});
 			
+			if (this.siteGrabber !== undefined &&
+				packet.isMainRequest())
+				this.siteGrabber.grab({
+					packet: packet,
+					agent: this
+				});
+			
 			if (!this.siteDispatcher.isInteresting(packet))
 			{
 				console.log('Ignoring HTTP request ' + packet.method + ' ' + packet.host + packet.url);			

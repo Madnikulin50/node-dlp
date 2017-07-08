@@ -11,6 +11,10 @@ class Data_Packet extends Base_Packet
 		this.isFull = true;
 	}
 
+	get isMainRequest() {
+		return this._data.incomingMessage.headers['referer'] === undefined;
+	}
+
 	get method() {
 		return this._data.incomingMessage.method;
 	}

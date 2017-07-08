@@ -32,6 +32,7 @@
     "mongoose-gridfs": "^0.1.0",
     "node-schedule": "^1.2.1",
     "node-telegram-bot-api": "^0.27.1",
-    "phantom": "^4.0.4"
+    "phantom": "^4.0.4",
+    "phantomjs-prebuilt": "^2.1.14"
   }
 }
