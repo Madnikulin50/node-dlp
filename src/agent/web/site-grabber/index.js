@@ -1,49 +1,97 @@
 const phantom = require("phantom");
+const Case = require('../../../case');
+const path = require("path");
+const Optimizer = require("./optimizer")
 
 class SiteGrabber
 {
 	constructor(in_Options = {}) {
 		this._options = Object.assign({},  in_Options);
+		this._optimizer = new Optimizer(this._options);
+	}
+
+	needGrab(in_Packet) {
+		let url = in_Packet.url;
+		if (url.indexOf('.html') !== -1)
+			return true;
+		if (url.indexOf('.shtml') !== -1)
+			return true;
+		if (url.indexOf('.js') !== -1)
+			return false;
+		if (url.indexOf('.css') !== -1)
+			return false;
+		if (url.indexOf('.map') !== -1)
+			return false;
+		return in_Packet.isMainRequest;
 	}
 
 	grab(in_Params, in_CB) {
 		var params = in_Params;
 		this.execute({
-			url: in_Params.url
-		}, (err, content) => {
+			url: params.packet.fullPath
+		}, (err, data) => {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			if (data === undefined) {
+				return;
+			}
+			if (data.plainText.length === 0)
+				return;
 			let new_case = new Case();
-			new_case.setFolder(path.join(in_Params.agent.audit_fld, new_case.id));
-			let packet = in_Params.packet;
+			new_case.setFolder(path.join(params.agent.audit_fld, new_case.id));
+			let packet = params.packet;
 			new_case.setParams({
-				service: in_Params.service || this.service,
+				service: params.service || this.service,
 				date: (new Date()).toUTCString(),
 				user: packet.user,
-				src_ip: packet.src_ip,
+				src_ip: packet.srcIp,
 				dst_host: packet.host,
 				channel: 'web',
-				agent: in_Params.agent.name,
-				user_agent: packet.userAgent
+				agent: params.agent.name,
+				user_agent: packet.userAgent,
+				subject: data.title
 			});
-			if (this._options.agent !== undefined)
-			{
-				return in_Params.agent.makeAudit(in_Params.case, in_CB);
-			}
+			new_case.setBody(data.plainText, (err) => {
+				if (params.agent !== undefined)
+				{
+					return params.agent.makeAudit(new_case, in_CB);
+				}
+			});
+			
 		});
 		in_CB();
 	}
 
 
 	_executeOnInstance(in_Params, in_CB) {
+
 		this._instance.createPage().then(page => {
-			page.on("onResourceRequested", function(requestData) {
-				console.info('Requesting ', requestData.url)
+			page.on("onResourceRequested", (requestData/*, networkRequest*/) => {
+				if (this._optimizer.needBlock(requestData.url))
+				{
+					console.info('Block requesting TODO ', requestData.url);
+					//networkRequest.abort();
+					return;
+				}
+				console.info('Requesting ', requestData.url);
 			});
+			let data = {
+				title:"",
+				plainText:""
+			};
 		
 			page.open(in_Params.url).then(status => {
 				console.log(status);
 				page.property('plainText').then(content => {
-					console.log(content);
-					in_CB(null, content);
+					if (content.length === 0)
+						return in_CB(null);
+					data.plainText = content;
+					return page.property('title');
+				}).then(title => {
+					data.title = title;
+					in_CB(null, data);
 				}).catch(err => in_CB(err));
 			}).catch(err => in_CB(err));
 		}).catch(err => in_CB(err));

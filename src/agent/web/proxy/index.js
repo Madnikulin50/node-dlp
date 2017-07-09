@@ -37,11 +37,11 @@ class Proxy_Agent extends Web_Agent
 			});
 			
 			if (this.siteGrabber !== undefined &&
-				packet.isMainRequest())
+				this.siteGrabber.needGrab(packet))
 				this.siteGrabber.grab({
 					packet: packet,
 					agent: this
-				});
+				}, (err)=>{});
 			
 			if (!this.siteDispatcher.isInteresting(packet))
 			{

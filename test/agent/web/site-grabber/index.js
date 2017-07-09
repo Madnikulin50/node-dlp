@@ -13,16 +13,20 @@ describe("Testing site-grabber", function() {
 		it("Извлекаем текст по ссылке " + cs.url, function() {
 
 			var testPromise = new Promise(function(resolve, reject) {
-				grabber.execute(cs, (err) => {
+				grabber.execute(cs, (err, data) => {
 					if (err)
 						return reject(err);
-					resolve(err);
+					resolve(data);
 				});
 			});
 			return testPromise.then((result) => {
-				expect(result).to.equal(null, 'Должен возвращаться null');
+				expect(result).to.not.equals(null);
+				if (result !== undefined) {
+					expect(result).to.have.property('title');
+					expect(result).to.have.property('plainText');
+				}				
 			}, (err) => {
-				expect(err).to.equal(null, 'Вернуло ошибку' + err);
+				expect(err).to.equal(null, 'Вернуло ошибку: ' + err);
 			});
 		}).timeout(60000);
 	});

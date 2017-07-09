@@ -3,7 +3,7 @@ var Case = require('../../case');
 var fs = require('fs');
 var path = require('path');
 var Site_Dispatcher = require('./sites_dispatcher');
-var SiteGrabber = require('./sites-grabber');
+var SiteGrabber = require('./site-grabber');
 
 class Web_Agent extends Agent
 {

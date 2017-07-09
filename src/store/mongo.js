@@ -171,24 +171,36 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 					in_CB(null);
 					return;
 				}
-
-				var gfs = Grid(db, mongodb);
-				var writestream = gfs.createWriteStream(
+				if (cs.hasBodyStream())
 				{
-					filename: '.body.txt'
-				});
-				writestream.on('close', (file)=>
+					var gfs = Grid(db, mongodb);
+					var writestream = gfs.createWriteStream(
+					{
+						filename: '.body.txt'
+					});
+					writestream.on('close', (file)=>
+					{
+						if (file === undefined)
+							return;
+						let collection = db.collection('incidents');
+						let params = Object.assign({}, cs);
+						params.body = file._id; 
+						params.md5 = md5;
+						collection.insert(params);
+						in_CB(null);
+					});
+					cs.getBodyStream().pipe(writestream);
+				}
+				else
 				{
-					if (file === undefined)
-						return;
 					let collection = db.collection('incidents');
 					let params = Object.assign({}, cs);
-					params.body = file._id; 
 					params.md5 = md5;
 					collection.insert(params);
 					in_CB(null);
-				});
-				cs.getBodyStream().pipe(writestream);
+				}
+
+				
 			});
 		});	
 	}
