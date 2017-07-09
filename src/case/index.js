@@ -89,6 +89,10 @@ class Case
 		return md5(buf);
 	}
 
+	hasBodyStream()
+	{
+		return fs.existsSync(path.join(this._folder, body_fn));
+	}
 	
 
 	getBodyStream()

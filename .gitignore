@@ -2,3 +2,4 @@ node_modules
 tmp_agents
 tmp_audit
 .http-mitm-proxy
+npm-debug.log

@@ -28,6 +28,8 @@ class Action
 
 	isSatisfying(in_Env, in_Cb)
 	{
+		if (this.active === false)
+			return in_Cb(null, false);
 		if (this.policy === undefined)
 			return in_Cb(null, true);
 		var counter = 0;

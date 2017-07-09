@@ -4,6 +4,7 @@
 	// Для получения дополнительной информации посетите: https://go.microsoft.com/fwlink/?linkid=830387
 	"version": "0.2.0",
 	"configurations": [
+
 		{
 			"type": "node",
             "request": "launch",
@@ -16,8 +17,12 @@
 			"request": "launch",
 			"name": "Site-Grabber",
 			"program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
-			"args": ["${workspaceRoot}/test/agent/web/site-grabber/index.js"]
-		},
+			"args": ["${workspaceRoot}/test/agent/web/site-grabber/index.js"],
+			"env": {
+				"$PATH":"$PATH;${workspaceRoot}/node_modules/.bin"
+			}
+			
+		}
 
 	]
 }

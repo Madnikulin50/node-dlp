@@ -1,29 +1,33 @@
-const sgr = require('../../../../agent/web/site-grabber');
+const sgr = require(__dirname + '/../../../../src/agent/web/site-grabber');
 var expect    = require("chai").expect;
 const fs = require('fs');
 const path = require('path');
 const async = require('async');
 
-describe("Договора", function() {
+describe("Testing site-grabber", function() {
 
 	let grabber = new sgr();
-	let urls = require(path.join(__dirname, 'urls.json'));
-
-	urls.forEach(url => {
-		it("Извлекаем текст по ссылке" + url.url, function() {
+	let cases = require(path.join(__dirname, 'urls.json'));
+	//cases = [cases[0]];
+	cases.forEach(cs => {
+		it("Извлекаем текст по ссылке " + cs.url, function() {
 
 			var testPromise = new Promise(function(resolve, reject) {
-				grabber.execute(params, (err) => {
+				grabber.execute(cs, (err, data) => {
 					if (err)
 						return reject(err);
-					resolve(err);
+					resolve(data);
 				});
 			});
 			return testPromise.then((result) => {
-				expect(result).to.equal(null, 'Должен возвращаться null');
+				expect(result).to.not.equals(null);
+				if (result !== undefined) {
+					expect(result).to.have.property('title');
+					expect(result).to.have.property('plainText');
+				}				
 			}, (err) => {
-				expect(err).to.equal(null, 'Вернуло ошибку' + err);
+				expect(err).to.equal(null, 'Вернуло ошибку: ' + err);
 			});
-		});
+		}).timeout(60000);
 	});
 });

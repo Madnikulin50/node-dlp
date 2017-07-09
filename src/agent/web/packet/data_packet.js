@@ -11,11 +11,31 @@ class Data_Packet extends Base_Packet
 		this.isFull = true;
 	}
 
+	get isMainRequest() {
+		return this._data.incomingMessage.headers['referer'] === undefined;
+	}
+
 	get method() {
 		return this._data.incomingMessage.method;
 	}
 	get host() {
 		return this._data.incomingMessage.headers.host;
+	}
+	get protocol() {
+		return 'http';
+	}
+	get fullPath() {
+		return this.protocol + '://' + this.host + this.url
+	}
+
+	get srcIp() {
+		let addr = this._data.incomingMessage.connection.remoteAddress;
+		if (addr !== undefined)
+			return addr;
+		addr = this._data.incomingMessage.headers['x-forwarded-for'];
+		if (addr !== undefined)
+			return addr;
+		return "127.0.0.1";
 	}
 
 	get pathName() {

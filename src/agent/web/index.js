@@ -3,7 +3,7 @@ var Case = require('../../case');
 var fs = require('fs');
 var path = require('path');
 var Site_Dispatcher = require('./sites_dispatcher');
-
+var SiteGrabber = require('./site-grabber');
 
 class Web_Agent extends Agent
 {
@@ -11,6 +11,8 @@ class Web_Agent extends Agent
     {
 		super(in_Options);
 		this.siteDispatcher = new Site_Dispatcher(in_Options);
+		if (in_Options.use_grabber === true)
+			this.siteGrabber = new SiteGrabber(in_Options);
     }
 	start()
 	{

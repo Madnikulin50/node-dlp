@@ -73,7 +73,7 @@ class Base_Dispatcher
 			subject: "Default POST logging",
 		};
 		cs.setParams(params);
-		cs.setBody(in_Params.packet, (err) => {
+		cs.setBody("TODO data", (err) => {
 			this.finishCaseSimple(in_Params, cs, in_CB);
 		});
 	}
