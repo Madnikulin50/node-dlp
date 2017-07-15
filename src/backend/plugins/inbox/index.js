@@ -33,7 +33,7 @@ module.exports = function(in_Options, in_Backend)
 		});
 		app.get('/api/get_incident.json', (req, res) => {
 			var id = req.query.id;
-				store.getIncident({
+			store.getIncident({
 				id: id
 			}, (err, data) => {
 				if (err)

@@ -20,6 +20,7 @@
   "dependencies": {
     "chai": "^4.0.2",
     "express": "^4.15.2",
+    "from2": "^2.3.0",
     "gridfs-stream": "^1.1.1",
     "http-mitm-proxy": "^0.5.2",
     "imap": "^0.8.19",
@@ -30,6 +31,7 @@
     "mongodb": "^2.2.26",
     "mongoose": "^4.9.8",
     "mongoose-gridfs": "^0.1.0",
+    "nntp-server": "^1.0.1",
     "node-schedule": "^1.2.1",
     "node-telegram-bot-api": "^0.27.1",
     "phantom": "^4.0.4",

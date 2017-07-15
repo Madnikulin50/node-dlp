@@ -4,6 +4,7 @@ var path = require('path');
 var Telegram = require('./telegram');
 
 var IMAP = require('./imap');
+var NNTP = require('./nntp');
 
 
 class Backend
@@ -17,6 +18,7 @@ class Backend
 
 
 		this.imap = new IMAP(in_Options);
+		this.nntp = new NNTP(in_Options);
 
 		let backend_opts = this.options.backend;
 		if (backend_opts["telegram-key"])

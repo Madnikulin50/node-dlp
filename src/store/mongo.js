@@ -61,7 +61,6 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 				};
 			}
 			
-
 			collection.find(query).sort({date: -1}).skip(in_Params.start).limit(in_Params.start + in_Params.count).toArray((err, items) => {
 				if (err) {
 					in_CB(err);
