@@ -138,6 +138,10 @@ class IMAP
 		var mailbox = command.args[0];
 		this.store.getNumIncidents({}, (err, result) => {
 			this.store.getIncidents({}, (err, incidents) => {
+				if (err) {
+					console.log(err);
+					return;
+				}
 				//get existent messages in mailbox
 				var numExist = result.count;
 				var numRecent = result.count;
@@ -169,6 +173,6 @@ class IMAP
 		});
 	}
 
-};
+}
 
 module.exports = IMAP;

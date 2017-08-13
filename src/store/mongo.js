@@ -1,6 +1,7 @@
 var Base_Store_Dispatcher = require('./base');
 var mongodb = require('mongodb');
 var Grid = require('gridfs-stream');
+var async = require('async');
 var ObjectId = mongodb.ObjectID;
 
 var streamToString = function(stream, cb) {
@@ -59,9 +60,11 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 						}
 					]
 				};
-			}
+      }
+      if (in_Params.query)
+        query = in_Params.query;
 			
-			collection.find(query).sort({date: -1}).skip(in_Params.start).limit(in_Params.start + in_Params.count).toArray((err, items) => {
+			collection.find(query).sort({date: 1}).skip(in_Params.start).limit(in_Params.start + in_Params.count).toArray((err, items) => {
 				if (err) {
 					in_CB(err);
 					return;
@@ -72,7 +75,7 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 					num: items.length,
 					items: items.filter((element) =>
 					{
-						element.numAttacments = 0;
+						element.numAttachments = element.attachments !== undefined ? element.attachments.length : 0;
 						return true;
 					})
 				};
@@ -100,7 +103,22 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 				in_CB(null, {ids: in_Params.ids});
 			});
 		});
-	}
+  }
+  
+  getAttachment(in_Params, in_CB)
+  {
+    var id = in_Params.id;
+  
+		connectDb(this, (err, db) => {
+			if (err) {
+				in_CB(err);
+				return;
+      }
+      var gfs = Grid(db, mongodb);
+      let stream = gfs.createReadStream({_id: id}, [{"content_type": 'application/octet-stream'}]);
+      in_CB(null, stream);
+    });
+  }
 
 	getIncident(in_Params, in_CB)
 	{
@@ -150,59 +168,110 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 			});
 		});
 	}
+  __doStoreIncident(in_AddParams, in_CB)
+  {
+    let collection = db.collection('incidents');
+    let params = Object.assign({}, cs, in_AddParams);
+    params.md5 = md5;
+    collection.insert(params);
+    in_CB(null);
+  }
+
+  __doStoreFiles(in_Params, in_CB)
+  {
+    var result = [];
+    var cs = in_Params.case;
+		var db = in_Params.db;
+    cs.getAttachments((err, files) => {
+      if (err)
+        return in_CB(err);
+      if (files.length === 0)
+        return in_CB(null, []);
+      async.each(files, (file, fileDone) => {
+        var gfs = Grid(db, mongodb);
+        var writestream = gfs.createWriteStream(
+        {
+          filename: file,
+          attachment: true
+        });
+        writestream.on('close', (fd) => {
+          if (file === undefined)
+            return fileDone(`File ${file} not stored`);
+          result.push({
+            filename:file,
+            size:fd.length,
+            id: fd._id
+          });
+          return fileDone();
+        });
+        cs.getAttachmentStream(file).pipe(writestream);
+      },
+      (err) => {
+        in_CB(err, result);
+      });
+    });
+  }
+
+  __doStoreBody(in_Params, in_CB)
+  {
+    var cs = in_Params.case;
+		var db = in_Params.db;
+		
+    if (cs.hasBodyStream())
+    {
+      var gfs = Grid(db, mongodb);
+      var writestream = gfs.createWriteStream(
+      {
+        filename: '.body.txt'
+      });
+      writestream.on('close', (file) =>
+      {
+        if (file === undefined)
+          return in_CB('Body not stored');
+        in_CB(null, file._id);
+      });
+      cs.getBodyStream().pipe(writestream);
+    }
+  }
 
 	doStore(in_Params, in_CB)
 	{
 		var cs = in_Params.case;
 		var db = new mongodb.Db(this.db, new mongodb.Server(this.server, this.port));
-		db.open(function (err) 
+		db.open((err) =>
 		{
-  			if (err)
+  		if (err)
 			{
 				in_CB(err);
 				return console.log(err);
 			}
 			var collection = db.collection('incidents'); 
-			let md5 = cs.calcMD5();
+      let md5 = cs.calcMD5();
+      var add = {
+        md5:md5
+      };
 			var query = {'md5': md5};
 			collection.findOne(query).then((item) => {
 				if (item) {
 					in_CB(null);
 					return;
-				}
-				if (cs.hasBodyStream())
-				{
-					var gfs = Grid(db, mongodb);
-					var writestream = gfs.createWriteStream(
-					{
-						filename: '.body.txt'
-					});
-					writestream.on('close', (file)=>
-					{
-						if (file === undefined)
-							return;
-						let collection = db.collection('incidents');
-						let params = Object.assign({}, cs);
-						params.body = file._id; 
-						params.md5 = md5;
-						collection.insert(params);
-						in_CB(null);
-					});
-					cs.getBodyStream().pipe(writestream);
-				}
-				else
-				{
-					let collection = db.collection('incidents');
-					let params = Object.assign({}, cs);
-					params.md5 = md5;
-					collection.insert(params);
-					in_CB(null);
-				}
-
-				
+        }      
+        this.__doStoreFiles({case:cs, db:db}, (err, result) => {
+          if (err)
+            return in_CB(err);
+          if (result.length > 0)
+            add.attachments = result;
+          this.__doStoreBody({case:cs, db:db}, (err, result) => {
+            if (result !== undefined)
+              add.body = result;
+            let incident = Object.assign({}, cs, add);
+            collection.insert(incident);
+            in_CB(null);
+          });
+        });
 			});
 		});	
 	}
-};
+}
 
 module.exports = Mongo_Store_Dispatcher;

@@ -71,10 +71,8 @@
 			"active" : false,
 			"name" : "Block secret word",
 			"policy" : "Block secret word", 
-			"type" : "block",
-			"rule" : "Credit cards"
+			"type" : "block"
 		}
-
 	]
 
 }

@@ -31,7 +31,19 @@ class Email_Agent extends Agent
 					this.makeCaseFromEml(path.join(testFolder, file));
 			});
 		});
-	}
+  }
+  __makeAttachmentFileName(attachment)
+  {
+    let fn = attachment.filename;
+    if (fn === undefined)
+      fn = 'unknown';
+    if (path.extname(fn).length !== 0)
+      return fn;
+    let contentType = attachment.contentType.split('/');
+    fn = fn + '.' + (contentType.length === 2 ? contentType[1] : contentType[0]);
+    return fn;
+  }
+
 	makeCaseFromEml(in_File)
 	{
 		let new_case = new Case();
@@ -61,10 +73,19 @@ class Email_Agent extends Agent
 				if (mail.headers['x-node-dlp-agent'] !== undefined)
 					params.agent = mail.header['x-node-dlp-agent']
 				new_case.setParams(params);
-				new_case.setBody(mail.text);
+        new_case.setBody(mail.text);
+        if (mail.attachments !== undefined && mail.attachments.length > 0)
+        {
+          mail.attachments.forEach((attachment) => {
+            new_case.pushAttachmentFromBuffer(this.__makeAttachmentFileName(attachment), attachment.content);
+          });
+        }
 			
 				fs.unlink(in_File, (err)=>{ console.log(err);});
-				this.makeAudit(new_case);
+				this.makeAudit(new_case, (err) => {
+          if (err) 
+            console.log(err);
+        });
 			});
 		}
 		catch (err)

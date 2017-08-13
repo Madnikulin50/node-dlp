@@ -10,12 +10,14 @@ module.exports = function(in_Options, in_Backend)
 		if (err)
 			throw err;
 
-		app.get('/api/get_incidents.json', (req, res) => {
-			let filter = req.query.filter;
+		app.post('/api/get-incidents', (req, res) => {
+      var params  = req.body || {};
+      params = Object.assign(params, req.query);
+			let filter = params.filter;
 			if (filter !== undefined &&
 				filter.length === 0)
 				filter = undefined;
-			let start = req.query.start;
+			let start = params.start;
 			if (start === undefined)
 				start = 0;
 			else
@@ -30,8 +32,11 @@ module.exports = function(in_Options, in_Backend)
 				}
 				res.json(data);
 			});
+    });
+    app.get('/api/get-info', (req, res) => {
+      res.json({});
 		});
-		app.get('/api/get_incident.json', (req, res) => {
+		app.get('/api/get-incident', (req, res) => {
 			var id = req.query.id;
 			store.getIncident({
 				id: id
@@ -42,9 +47,18 @@ module.exports = function(in_Options, in_Backend)
 				}
 				res.json(data);
 			});
-		});
+    });
 
-		app.get('/api/remove_incident.json', (req, res) => {
+    app.get('/api/get-attachment', (req, res) => {
+      var params  = req.body || {};
+      params = Object.assign(params, req.query);
+      store.getAttachment(params, (err, stream) => {
+        stream.pipe(res);
+      });
+    });
+    
+
+		app.get('/api/remove-incident', (req, res) => {
 			var ids = req.query.ids;
 			store.removeIncident({
 				ids: ids
@@ -57,6 +71,17 @@ module.exports = function(in_Options, in_Backend)
 			});
 		});
 
+    app.get('/api/get-store-info', (req, res) => {
+			store.getNumIncidents({
+				unreaded: true
+			}, (err, data) => {
+				if (err)
+				{
+					res.sendStatus(400, err);
+				}
+				res.json(data);
+			});
+		});
 		app.get('/api/get_num_unreaded_incidents.json', (req, res) => {
 			store.getNumIncidents({
 				unreaded: true
