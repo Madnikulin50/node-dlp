@@ -75,6 +75,8 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 					num: items.length,
 					items: items.filter((element) =>
 					{
+            if (element.agent === 'undefined')
+              element.agent = undefined;
 						element.numAttachments = element.attachments !== undefined ? element.attachments.length : 0;
 						return true;
 					})
@@ -86,22 +88,28 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 
 	removeIncident(in_Params, in_CB)
 	{
-		let ids = JSON.parse(in_Params.ids);
-		var id = ids[0];
+		let ids = in_Params.ids;
+		
 		connectDb(this, (err, db) => {
 			if (err) {
 				in_CB(err);
 				return;
 			}
-			var collection = db.collection('incidents'); 
-			var query = {'_id':new ObjectId(id)};
-			collection.remove(query, (err) => {
-				if (err) {
-					in_CB(err);
-					return;
-				}
-				in_CB(null, {ids: in_Params.ids});
-			});
+      var collection = db.collection('incidents');
+      async.each(ids, (id, idDone) => {
+        let query = {'_id':new ObjectId(id)};
+        collection.remove(query, (err) => {
+          if (err)
+            return idDone(err);
+          return idDone();
+        })
+      },
+      (err) => {
+        if (err) {
+          return in_CB(err);
+        }
+        return in_CB(null, {ids: in_Params.ids});
+      });
 		});
   }
   
@@ -117,6 +125,26 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
       var gfs = Grid(db, mongodb);
       let stream = gfs.createReadStream({_id: id}, [{"content_type": 'application/octet-stream'}]);
       in_CB(null, stream);
+    });
+  }
+
+  pushLabel(in_Params, in_CB)
+  {
+    var {id, label} = in_Params;
+		connectDb(this, (err, db) => {
+			if (err) {
+				in_CB(err);
+				return;
+      }
+
+      var collection = db.collection('incidents'); 
+			var query = {'_id':new ObjectId(id)};
+      collection.update(query, {
+          labels:[label]
+        }, 
+        { upsert: true },
+        in_CB(err)
+      );
     });
   }
 
@@ -139,7 +167,8 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 				let bodyStream = gfs.createReadStream({_id: item.body});
 				item.numAttacments = 0;
 				streamToString(bodyStream, (str) => {
-					item.body = str;
+          if (str === 'undefined')
+					  item.body = undefined;
 					in_CB(null, item);
 				});
 			});
@@ -217,34 +246,34 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
     var cs = in_Params.case;
 		var db = in_Params.db;
 		
-    if (cs.hasBodyStream())
+    if (!cs.hasBodyStream())
+      return in_CB();
+    
+    var gfs = Grid(db, mongodb);
+    var writestream = gfs.createWriteStream(
     {
-      var gfs = Grid(db, mongodb);
-      var writestream = gfs.createWriteStream(
-      {
-        filename: '.body.txt'
-      });
-      writestream.on('close', (file) =>
-      {
-        if (file === undefined)
-          return in_CB('Body not stored');
-        in_CB(null, file._id);
-      });
-      cs.getBodyStream().pipe(writestream);
-    }
+      filename: '.body.txt'
+    });
+    writestream.on('close', (file) =>
+    {
+      if (file === undefined)
+        return in_CB('Body not stored');
+      in_CB(null, file._id);
+    });
+    cs.getBodyStream().pipe(writestream);
+    
   }
 
 	doStore(in_Params, in_CB)
 	{
 		var cs = in_Params.case;
 		var db = new mongodb.Db(this.db, new mongodb.Server(this.server, this.port));
-		db.open((err) =>
-		{
-  		if (err)
-			{
-				in_CB(err);
-				return console.log(err);
-			}
+		db.open((err) => {
+  		if (err) {
+        console.log(err)
+				return in_CB(err);
+      }
+      
 			var collection = db.collection('incidents'); 
       let md5 = cs.calcMD5();
       var add = {
@@ -253,8 +282,7 @@ class Mongo_Store_Dispatcher extends Base_Store_Dispatcher
 			var query = {'md5': md5};
 			collection.findOne(query).then((item) => {
 				if (item) {
-					in_CB(null);
-					return;
+					return in_CB(null);
         }      
         this.__doStoreFiles({case:cs, db:db}, (err, result) => {
           if (err)

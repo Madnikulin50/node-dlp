@@ -3,6 +3,8 @@ var path = require('path');
 var crypto = require('crypto');
 var md5 = require('md5');
 
+const tools = require('../tools');
+
 const params_fn = '.params';
 const body_fn = '.body';
 const attachments_fld = '.att';
@@ -15,14 +17,20 @@ class Case {
     this.id = crypto.randomBytes(48).toString('hex');
   }
 
-  static load(in_Path) {
-
+  static fromCatalog(in_Path, in_Callback) {
+    let cs = new Case();
+    cs._folder = in_Path
+    cs.loadParams((err) => {
+      if (err)
+        return in_Callback(err);
+      return in_Callback(null, cs);
+    });
   }
 
   clean(in_Callback = (err) => { if (err) console.log(err); })
   {
-    return fs.unlink(this._folder, (err) => {
-      in_Callback();
+    return tools.unlinkFolder(this._folder, (err) => {
+      in_Callback(err);
     });
   }
 
@@ -48,8 +56,26 @@ class Case {
     fs.writeFile(path.join(this._folder, params_fn), JSON.stringify(this, '\t'), 'utf8');
   }
 
-  getParams() {
+  loadParams(in_Callback) {
+    fs.readFile(path.join(this._folder, params_fn), 'utf8', (err, data) => {
+      if (err)
+        return in_Callback(err);
+      try {
+        let params = JSON.parse(data);
+        this.channel = undefined;
+        this.agent = undefined;
+        this.id = undefined;
+        Object.assign(this, params);
+        return in_Callback();
+      } catch (error) {
+        return in_Callback(err);
+      }
+    });
+    
+  }
 
+  getParams() {
+    return this;
   }
 
 
@@ -122,7 +148,7 @@ class Case {
 
   ensureFolder(in_Path, in_Callback) {
     fs.exists(in_Path, (exists) => {
-      exists ? in_Callback(null) : fs.mkdir(in_Path, in_Callback)
+      exists ? in_Callback(null) : fs.mkdir(in_Path, in_Callback);
     });
   }
 }

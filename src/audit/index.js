@@ -1,8 +1,11 @@
-var Options = require('../options');
-var async = require('async');
-var policy_creator = require('./policy');
-var fs = require('fs');
-var Analyse_Log = require('./analyze-log');
+const Options = require('../options');
+const async = require('async');
+const policy_creator = require('./policy');
+const fs = require('fs');
+const path = require('path');
+const Analyse_Log = require('./analyze-log');
+const tools = require('../tools');
+const Case = require('../case');
 
 let instance = null;
 
@@ -69,14 +72,30 @@ class Audit {
             in_CB(null, null);
             return;
           }
+          async.eachSeries(files, (file, fileDone) => {
+            this.processCatalog(path.join(testFolder, file), (err) => {
+              if (err)
+                console.log(`Error ${err} on restored catalog ${file}`);
+              fileDone();
+            });
+          },
+          (err) => {
 
-          files.forEach((file) => {
-            if (file.endsWith(".eml"))
-              this.makeCaseFromEml(path.join(testFolder, file));
           });
         });
         in_CB(null);
       });
+  }
+  processCatalog(in_Path, in_Callback = (err) => { if (err) throw err; }) {
+    fs.exists(path.join(in_Path, '.params'), (exists) => {
+      if (!exists)
+        return tools.unlinkFolder(in_Path, in_Callback);
+      Case.fromCatalog(in_Path, (err, cs) => {
+        if (err)
+          return tools.unlinkFolder(in_Path, in_Callback);
+        return this.execute({case: cs}, in_Callback);
+      });
+    });
   }
 
   execute(in_Env, in_Callback = (err) => { if (err) throw err; }) {

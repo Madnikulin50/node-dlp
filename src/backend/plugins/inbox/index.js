@@ -56,20 +56,57 @@ module.exports = function(in_Options, in_Backend)
         stream.pipe(res);
       });
     });
-    
 
-		app.get('/api/remove-incident', (req, res) => {
-			var ids = req.query.ids;
+    app.post('/api/push-label', (req, res) => {
+      var params  = req.body || {};
+      params = Object.assign(params, req.query);
+      store.pushLabel(params, (err) => {
+        if (err)
+          return res.sendStatus(400, err);
+        res.sendStatus(200, 'OK');
+      });
+    });
+
+    app.post('/api/pop-label', (req, res) => {
+      var params  = req.body || {};
+      params = Object.assign(params, req.query);
+      store.popLabel(params, (err) => {
+        if (err)
+          return res.sendStatus(400, err);
+        res.sendStatus(200, 'OK');
+      });
+    });
+
+    app.get('/api/enum-labels', (req, res) => {
+      var labels = [
+        { name:'Incident', color: 'warning'},
+        { name:'Leak', color: 'danger'},
+        { name:'News', color: 'success'},
+        { name:'Advertising', color: 'success'},
+        { name:'Spam', color: 'success'}
+      ];
+      res.json(labels);
+    });
+
+    let removeIncident = (req, res) => {
+      let ids = req.body || {};
+      ids = Object.assign(ids, req.query);
+      if (ids.id === undefined)
+        return res.sendStatus(400, "Incident identificator not set");
+      
 			store.removeIncident({
-				ids: ids
+				ids: Array.isArray(ids.id) ? ids.id : [ids.id]
 			}, (err, data) => {
-				if (err)
-				{
-					res.sendStatus(400, err);
+				if (err) {
+					return res.sendStatus(400, err);
 				}
 				res.json(data);
-			});
-		});
+      });
+    };
+    
+
+    app.get('/api/remove-incident', removeIncident);
+    app.post('/api/remove-incident', removeIncident);
 
     app.get('/api/get-store-info', (req, res) => {
 			store.getNumIncidents({
@@ -77,7 +114,7 @@ module.exports = function(in_Options, in_Backend)
 			}, (err, data) => {
 				if (err)
 				{
-					res.sendStatus(400, err);
+					return res.sendStatus(400, err);
 				}
 				res.json(data);
 			});
@@ -86,9 +123,8 @@ module.exports = function(in_Options, in_Backend)
 			store.getNumIncidents({
 				unreaded: true
 			}, (err, data) => {
-				if (err)
-				{
-					res.sendStatus(400, err);
+				if (err) {
+					return res.sendStatus(400, err);
 				}
 				res.json(data);
 			});
