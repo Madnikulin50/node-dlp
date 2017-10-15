@@ -6,9 +6,9 @@ var path = require('path');
 
 class Email_Agent extends Agent
 {
-    constructor(in_Options)
+    constructor(inOptions)
     {
-		super(in_Options);
+		super(inOptions);
     }
 	get name() {
 		return 'unknown email agent';

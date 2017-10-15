@@ -6,16 +6,16 @@ const async = require('async');
 var storeLoader = require('../../store');
 class IMAP
 {
-	constructor(in_Options)
+	constructor(inOptions)
 	{
-		this.options = in_Options;
-		let backend_opts = this.options.backend;
-		imapServer.IMAPServer(backend_opts.imap.portnum);
+		this.options = inOptions;
+		let backendOpts = this.options.backend;
+		imapServer.IMAPServer(backendOpts.imap.portnum);
 		defaultcommands.SetDefaultCommands();
 		imapServer.IMAPCommands.LOGIN.callback = this.login.bind(this);
 		imapServer.IMAPCommands.SELECT.callback = this.select.bind(this);
 		imapServer.IMAPCommands.FETCH.callback = this.fetch.bind(this);
-		let storeAllOptions = in_Options.store;
+		let storeAllOptions = inOptions.store;
 		let storeOptions = storeAllOptions[storeAllOptions.active];
 
 		let store = storeLoader(storeOptions,
@@ -28,8 +28,8 @@ class IMAP
 
 	login(command, socket)
 	{
-		let backend_opts = this.options.backend;
-		let accounts = backend_opts.imap.accounts;
+		let backendOpts = this.options.backend;
+		let accounts = backendOpts.imap.accounts;
 		for (let i in accounts)
 		{
 			let account = accounts[i];

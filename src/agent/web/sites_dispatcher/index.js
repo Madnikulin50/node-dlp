@@ -2,9 +2,9 @@ const fs = require('fs');
 
 class Site_Dispatcher
 {
-	constructor(in_Options)
+	constructor(inOptions)
 	{
-		this.options = in_Options;
+		this.options = inOptions;
 		this.loadDispatchers();
 	}
 
@@ -48,16 +48,16 @@ class Site_Dispatcher
 		return false;
 	
 	}
-	process(in_Params, in_CB = err => { if (err) throw err; })
+	process(inParams, onDone = err => { if (err) throw err; })
 	{
 		for (let i in this.dispatchers)
 		{
-			if (this.dispatchers[i].isMine(in_Params.packet))
+			if (this.dispatchers[i].isMine(inParams.packet))
 			{
-				return this.dispatchers[i].process(in_Params, in_CB);
+				return this.dispatchers[i].process(inParams, onDone);
 			}
 		}
-		return in_CB(null, null);
+		return onDone(null, null);
 	}
 }
 

@@ -8,11 +8,11 @@ const debug = require('debug');
 debug.log = console.info.bind(console);
 class NNTP
 {
-	constructor(in_Options)
+	constructor(inOptions)
 	{
-		this.options = in_Options;
-		let backend_opts = this.options.backend;
-		let storeAllOptions = in_Options.store;
+		this.options = inOptions;
+		let backendOpts = this.options.backend;
+		let storeAllOptions = inOptions.store;
 		let storeOptions = storeAllOptions[storeAllOptions.active];
 
 		let store = storeLoader(storeOptions,

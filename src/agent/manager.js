@@ -2,9 +2,9 @@ var fs = require('fs');
 
 class Agent_Manager {
 
-  constructor(in_Options) {
+  constructor(inOptions) {
     this.agents = [];
-    let agent_opts = in_Options.agents;
+    let agent_opts = inOptions.agents;
     if (!fs.existsSync(agent_opts.common.tmp_fld))
       fs.mkdir(agent_opts.common.tmp_fld);
 

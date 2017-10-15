@@ -20,9 +20,9 @@ class Store_Action extends After_All_Action
 		});
 		return this;
 	}
-	doAfterAll(in_Env, in_Callback)
+	doAfterAll(in_Env, onDone)
 	{
-		return this._store.doStore(in_Env, in_Callback);
+		return this._store.doStore(in_Env, onDone);
 	}
 
 	

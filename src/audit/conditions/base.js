@@ -1,9 +1,9 @@
 
 class Base_Condition
 {
-	constructor(in_Options, in_Cb)
+	constructor(inOptions, in_Cb)
 	{
-		Object.assign(this, in_Options);
+		Object.assign(this, inOptions);
 	}
 
 	isSatisfied(in_Env, in_Cb)

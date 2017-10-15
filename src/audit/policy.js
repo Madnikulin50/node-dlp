@@ -8,21 +8,21 @@ class Policy
 		
     }
     
-    load(in_Options, in_Cb)
+    load(inOptions, in_Cb)
     {
-		Object.assign(this, in_Options);
-		this.name = in_Options.name;
+		Object.assign(this, inOptions);
+		this.name = inOptions.name;
 		this.conditions = [];
 		
-		if (in_Options.condition === undefined)
+		if (inOptions.condition === undefined)
 		{
 			return in_Cb(null, this);
 		}
 		let conditions;
-		if (!Array.isArray(in_Options.condition))
-			conditions = [ in_Options.condition ];
+		if (!Array.isArray(inOptions.condition))
+			conditions = [ inOptions.condition ];
 		else
-			conditions = in_Options.condition;
+			conditions = inOptions.condition;
 
 
 		async.each(conditions, (condition, callback) => {
@@ -63,8 +63,8 @@ class Policy
 
 };
 
-module.exports = function(in_Options, in_Cb)
+module.exports = function(inOptions, in_Cb)
 {
 	let policy = new Policy();
-	return policy.load(in_Options, in_Cb);
+	return policy.load(inOptions, in_Cb);
 };

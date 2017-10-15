@@ -6,9 +6,9 @@ class Facebook_Dispatcher extends Base_Dispatcher
 		return true;
 	}
 
-	constructor(in_Options)
+	constructor(inOptions)
 	{
-		super(in_Options);
+		super(inOptions);
 	}
 
 	get service()

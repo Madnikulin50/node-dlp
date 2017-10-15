@@ -2,11 +2,11 @@ var Base_Condition = require('./base.js');
 
 class Contain_Condition extends Base_Condition
 {
-    constructor(in_Options, in_Cb)
+    constructor(inOptions, in_Cb)
     {
-		super(in_Options, in_Cb);
-        this.mask = in_Options.mask;
-        this.field = in_Options.field;
+		super(inOptions, in_Cb);
+        this.mask = inOptions.mask;
+        this.field = inOptions.field;
 		in_Cb(null, this);
     }
 

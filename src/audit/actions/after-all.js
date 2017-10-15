@@ -7,19 +7,19 @@ class After_All_Action extends Action
 		super(in_Action_Options);
 	}
 
-	do(in_Env, in_Callback)
+	do(in_Env, onDone)
 	{
 		this.isSatisfying(in_Env, (err, result) =>
 		{
 			if (result)
 				in_Env.afterAllActions.push(this);
-			in_Callback(err, result);
+			onDone(err, result);
 		})
 	}
 
-	doAfterAll(in_Env, in_Callback)
+	doAfterAll(in_Env, onDone)
 	{
-		in_Callback(null);
+		onDone(null);
 	}
 };
 

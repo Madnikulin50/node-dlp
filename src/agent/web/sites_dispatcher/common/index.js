@@ -10,9 +10,9 @@ class Common_Dispatcher extends Base_Dispatcher
 		return 255;
 	}
 
-	constructor(in_Options)
+	constructor(inOptions)
 	{
-		super(in_Options);
+		super(inOptions);
 	}
 
 

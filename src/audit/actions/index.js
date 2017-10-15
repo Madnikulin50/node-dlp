@@ -44,22 +44,22 @@ class Action
 		})
 	}
 
-	do(in_Case, in_Callback)
+	do(in_Case, onDone)
 	{
 		console.log("Executed " + this.type + " action " + (this.name !== undefined ? this.name : "(noname)"));
 		var result = {block:false};
-		if (in_Callback)
-			in_Callback(null, result);
+		if (onDone)
+			onDone(null, result);
 		return result;
 	}
 
-	static loadActions(in_Options)
+	static loadActions(inOptions)
 	{
 		let actions = [];
-		in_Options.agents.forEach((element)=>
+		inOptions.agents.forEach((element)=>
 		{
 			let new_agent_class = require(path.join(__dirname, element.type + ".js"));
-			let new_agent = new new_agent_class(element, in_Options);
+			let new_agent = new new_agent_class(element, inOptions);
 			agents.push(new_agent);
 		});
 		return agents;

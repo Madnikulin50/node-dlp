@@ -10,17 +10,17 @@ const Case = require('../case');
 let instance = null;
 
 class Audit {
-  constructor(in_Options, in_Cb) {
-    if (in_Options)
-      this.loadOptions(in_Options, (err, result) => {
+  constructor(inOptions, in_Cb) {
+    if (inOptions)
+      this.loadOptions(inOptions, (err, result) => {
         in_Cb(err, instance);
       });
   }
 
-  static create(in_Options, in_Cb) {
+  static create(inOptions, in_Cb) {
     if (instance)
       return instance;
-    instance = new Audit(in_Options, in_Cb);
+    instance = new Audit(inOptions, in_Cb);
     return instance;
   }
 
@@ -38,10 +38,10 @@ class Audit {
     })
   }
 
-  loadOptions(in_Options, in_CB) {
+  loadOptions(inOptions, onDone) {
     this.policies = [];
     let policy_opts;
-    let audit_opts = in_Options.audit;
+    let audit_opts = inOptions.audit;
     if (Array.isArray(audit_opts.policy))
       policy_opts = audit_opts.policy;
     else
@@ -69,7 +69,7 @@ class Audit {
         fs.readdir(testFolder, (err, files) => {
           if (err) {
             console.log(err);
-            in_CB(null, null);
+            onDone(null, null);
             return;
           }
           async.eachSeries(files, (file, fileDone) => {
@@ -83,22 +83,22 @@ class Audit {
 
           });
         });
-        in_CB(null);
+        onDone(null);
       });
   }
-  processCatalog(in_Path, in_Callback = (err) => { if (err) throw err; }) {
-    fs.exists(path.join(in_Path, '.params'), (exists) => {
+  processCatalog(inPath, onDone = (err) => { if (err) throw err; }) {
+    fs.exists(path.join(inPath, '.params'), (exists) => {
       if (!exists)
-        return tools.unlinkFolder(in_Path, in_Callback);
-      Case.fromCatalog(in_Path, (err, cs) => {
+        return tools.unlinkFolder(inPath, onDone);
+      Case.fromCatalog(inPath, (err, cs) => {
         if (err)
-          return tools.unlinkFolder(in_Path, in_Callback);
-        return this.execute({case: cs}, in_Callback);
+          return tools.unlinkFolder(inPath, onDone);
+        return this.execute({case: cs}, onDone);
       });
     });
   }
 
-  execute(in_Env, in_Callback = (err) => { if (err) throw err; }) {
+  execute(in_Env, onDone = (err) => { if (err) throw err; }) {
     let err = null;
     let result = {};
     in_Env.afterAllActions = [];
@@ -117,7 +117,7 @@ class Audit {
             return callback(err);
           });
         }, (err) => {
-          return in_Env.case.clean(in_Callback(err, in_Env.result));
+          return in_Env.case.clean(onDone(err, in_Env.result));
         });
       });
   }

@@ -6,10 +6,10 @@ var Packet = require('../packet');
 
 class Proxy_Agent extends Web_Agent
 {
-	constructor(in_Options)
+	constructor(inOptions)
 	{
-		super(in_Options);
-		this.port = in_Options.port;
+		super(inOptions);
+		this.port = inOptions.port;
 		this.seqno = 0;
 	}
 

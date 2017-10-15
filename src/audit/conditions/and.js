@@ -2,9 +2,9 @@ var Complex_Condition = require('./complex_condition.js');
 
 class And_Condition extends Complex_Condition
 {
-    constructor(in_Options, in_Cb)
+    constructor(inOptions, in_Cb)
     {
-        super(in_Options, in_Cb);
+        super(inOptions, in_Cb);
     }    
     
     isSatisfied(in_Env)

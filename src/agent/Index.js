@@ -1,30 +1,30 @@
 var audit = require('../audit');
 
 class Agent {
-  constructor(in_Options) {
-    Object.assign(this, in_Options);
+  constructor(inOptions) {
+    Object.assign(this, inOptions);
   }
 
   get name() {
     return 'unknown';
   }
 
-  start(in_Params, in_Callback) {
+  start(inParams, onDone) {
 
   }
 
-  stop(in_Params, in_Callback) {
+  stop(inParams, onDone) {
 
   }
-  makeAudit(in_Case, in_Callback) {
+  makeAudit(in_Case, onDone) {
     return audit.get().execute({
       case: in_Case
-    }, in_Callback);
+    }, onDone);
   }
 
-  static createAgentManager(in_Options) {
+  static createAgentManager(inOptions) {
     var Agent_Manager = require('./manager.js');
-    return new Agent_Manager(in_Options);
+    return new Agent_Manager(inOptions);
   }
 
 

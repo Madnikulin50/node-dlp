@@ -1,12 +1,12 @@
-var Email_Sheduled_Agent = require('../sheduled.js');
+var EmailSheduledAgent = require('../sheduled.js');
 
 
-class POP3_Agent extends Email_Sheduled_Agent
+class POP3_Agent extends EmailSheduledAgent
 {
-    constructor(in_Options)
+    constructor(inOptions)
     {
-        super(in_Options);
-        Object.assign(this, in_Options);
+        super(inOptions);
+        Object.assign(this, inOptions);
     }
 	get name() {
 		return 'pop3';

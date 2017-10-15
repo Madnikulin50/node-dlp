@@ -3,10 +3,10 @@ var creator = require('./index.js');
 
 class Not_Condition extends Base_Condition
 {
-    constructor(in_Options, in_Cb)
+    constructor(inOptions, in_Cb)
     {
-		super(in_Options, in_Cb);
-		creator(in_Options.condition, (err, result) => {
+		super(inOptions, in_Cb);
+		creator(inOptions.condition, (err, result) => {
 			if (err)
 				return in_Cb(err);
 			this.condition = result;

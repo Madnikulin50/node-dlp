@@ -1,157 +1,142 @@
-var fs = require('fs');
-var path = require('path');
-var crypto = require('crypto');
-var md5 = require('md5');
+var fs = require('fs')
+var path = require('path')
+var crypto = require('crypto')
+var md5 = require('md5')
 
-const tools = require('../tools');
+const tools = require('../tools')
 
-const params_fn = '.params';
-const body_fn = '.body';
-const attachments_fld = '.att';
-const attchments_texts_fld = '.att_text';
+const params_fn = '.params'
+const body_fn = '.body'
+const attachments_fld = '.att'
+const attchments_texts_fld = '.att_text'
 
 class Case {
-  constructor() {
-    this.channel = 'undefined';
-    this.agent = 'undefined';
-    this.id = crypto.randomBytes(48).toString('hex');
+  constructor () {
+    this.channel = 'undefined'
+    this.agent = 'undefined'
+    this.id = crypto.randomBytes(48).toString('hex')
   }
 
-  static fromCatalog(in_Path, in_Callback) {
-    let cs = new Case();
-    cs._folder = in_Path
+  static fromCatalog (inPath, onDone) {
+    let cs = new Case()
+    cs._folder = inPath
     cs.loadParams((err) => {
-      if (err)
-        return in_Callback(err);
-      return in_Callback(null, cs);
-    });
+      if (err) { return onDone(err) }
+      return onDone(null, cs)
+    })
   }
 
-  clean(in_Callback = (err) => { if (err) console.log(err); })
-  {
+  clean (onDone = (err) => { if (err) console.log(err) }) {
     return tools.unlinkFolder(this._folder, (err) => {
-      in_Callback(err);
-    });
+      onDone(err)
+    })
   }
 
-  getField(in_Field) {
-    let val = this[in_Field];
-    if (val !== undefined)
-      return val;
-    if (in_Field === 'body')
-      return fs.readFileSync(path.join(this._folder, body_fn), 'utf8');
-    return undefined;
+  getField (inField) {
+    let val = this[inField]
+    if (val !== undefined) { return val }
+    if (inField === 'body') { return fs.readFileSync(path.join(this._folder, body_fn), 'utf8') }
+    return undefined
   }
 
-  pushRule(in_Rule) {
-    this.rules.push(in_Rule);
-    storeParams();
+  pushRule (in_Rule) {
+    this.rules.push(in_Rule)
+    storeParams()
   }
 
-  isRulePresent(in_Rule) {
-    return this.rules.indexOf(in_Rule) !== -1;
+  isRulePresent (in_Rule) {
+    return this.rules.indexOf(in_Rule) !== -1
   }
 
-  storeParams() {
-    fs.writeFile(path.join(this._folder, params_fn), JSON.stringify(this, '\t'), 'utf8');
+  storeParams () {
+    fs.writeFile(path.join(this._folder, params_fn), JSON.stringify(this, '\t'), 'utf8')
   }
 
-  loadParams(in_Callback) {
+  loadParams (onDone) {
     fs.readFile(path.join(this._folder, params_fn), 'utf8', (err, data) => {
-      if (err)
-        return in_Callback(err);
+      if (err) { return onDone(err) }
       try {
-        let params = JSON.parse(data);
-        this.channel = undefined;
-        this.agent = undefined;
-        this.id = undefined;
-        Object.assign(this, params);
-        return in_Callback();
+        let params = JSON.parse(data)
+        this.channel = undefined
+        this.agent = undefined
+        this.id = undefined
+        Object.assign(this, params)
+        return onDone()
       } catch (error) {
-        return in_Callback(err);
+        return onDone(err)
       }
-    });
-    
+    })
   }
 
-  getParams() {
-    return this;
+  getParams () {
+    return this
   }
 
-
-  setParams(in_Params) {
-    Object.assign(this, in_Params);
-    this.storeParams();
+  setParams (inParams) {
+    Object.assign(this, inParams)
+    this.storeParams()
   }
 
-  setFolder(in_Folder) {
-    this._folder = in_Folder;
-    if (!fs.existsSync(this._folder))
-      fs.mkdirSync(this._folder);
+  setFolder (in_Folder) {
+    this._folder = in_Folder
+    if (!fs.existsSync(this._folder)) { fs.mkdirSync(this._folder) }
   }
 
-  setBody(in_String, in_Callback) {
-    fs.writeFile(path.join(this._folder, body_fn), in_String, 'utf8', in_Callback);
+  setBody (in_String, onDone) {
+    fs.writeFile(path.join(this._folder, body_fn), in_String, 'utf8', onDone)
   }
 
-  getEncodedBody(in_Encoding, in_Callback) {
-    fs.readFile(path.join(this._folder, body_fn), in_Encoding, in_Callback);
+  getEncodedBody (in_Encoding, onDone) {
+    fs.readFile(path.join(this._folder, body_fn), in_Encoding, onDone)
   }
 
-  getBody(in_Callback) {
-    fs.readFile(path.join(this._folder, body_fn), in_Callback);
+  getBody (onDone) {
+    fs.readFile(path.join(this._folder, body_fn), onDone)
   }
 
-
-  calcMD5() {
-    let buf = JSON.stringify(this);
-    return md5(buf);
+  calcMD5 () {
+    let buf = JSON.stringify(this)
+    return md5(buf)
   }
 
-  hasBodyStream() {
-    return fs.existsSync(path.join(this._folder, body_fn));
+  hasBodyStream () {
+    return fs.existsSync(path.join(this._folder, body_fn))
   }
 
-
-  getBodyStream() {
-    return fs.createReadStream(path.join(this._folder, body_fn));
+  getBodyStream () {
+    return fs.createReadStream(path.join(this._folder, body_fn))
   }
 
-  getAttachments(in_Callback)
-  {
+  getAttachments (onDone) {
     fs.readdir(path.join(this._folder, attachments_fld), (err, files) => {
-      if (err)
-        return in_Callback(null, []);
-      return in_Callback(err, files);
-    });
+      if (err) { return onDone(null, []) }
+      return onDone(err, files)
+    })
   }
 
-  getAttachmentStream(in_Filename) {
-    return fs.createReadStream(path.join(path.join(this._folder, attachments_fld), in_Filename));
+  getAttachmentStream (in_Filename) {
+    return fs.createReadStream(path.join(path.join(this._folder, attachments_fld), in_Filename))
   }
 
-  pushAttachment(in_Path, in_Filename, in_Callback) {
+  pushAttachment (inPath, in_Filename, onDone) {
     this.ensureFolder(path.join(this._folder, attachments_fld), (err) => {
-      if (err)
-        return in_Callback(err);
-      fs.writeFile(path.join(this._folder, attachments_fld, in_Filename), fs.createReadStream(in_Path), in_Callback);
-    });
+      if (err) { return onDone(err) }
+      fs.writeFile(path.join(this._folder, attachments_fld, in_Filename), fs.createReadStream(inPath), onDone)
+    })
   }
 
-  pushAttachmentFromBuffer(in_Filename, in_Buffer, in_Callback = (err) => { if (err) console.log(err); }) {
+  pushAttachmentFromBuffer (in_Filename, in_Buffer, onDone = (err) => { if (err) console.log(err) }) {
     this.ensureFolder(path.join(this._folder, attachments_fld), (err) => {
-      if (err)
-        return in_Callback(err);
-      fs.writeFile(path.join(this._folder, attachments_fld, in_Filename), in_Buffer, in_Callback);
-    });
+      if (err) { return onDone(err) }
+      fs.writeFile(path.join(this._folder, attachments_fld, in_Filename), in_Buffer, onDone)
+    })
   }
 
-  ensureFolder(in_Path, in_Callback) {
-    fs.exists(in_Path, (exists) => {
-      exists ? in_Callback(null) : fs.mkdir(in_Path, in_Callback);
-    });
+  ensureFolder (inPath, onDone) {
+    fs.exists(inPath, (exists) => {
+      exists ? onDone(null) : fs.mkdir(inPath, onDone)
+    })
   }
 }
 
-
-module.exports = Case;
+module.exports = Case

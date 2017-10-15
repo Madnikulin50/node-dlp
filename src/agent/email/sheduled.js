@@ -2,22 +2,22 @@ var Email_Agent = require('./index.js');
 var schedule = require('node-schedule');
 
 
-class Email_Sheduled_Agent extends Email_Agent
+class EmailSheduledAgent extends Email_Agent
 {
-    constructor(in_Options)
+    constructor(inOptions)
     {
-        super(in_Options);
-        this.shedule = in_Options.shedule;
+        super(inOptions);
+        this.shedule = inOptions.shedule;
     }
 
-    start(in_Params, in_Callback)
+    start(inParams, onDone)
     {
 		if (this.enabled)
         	this._job = schedule.scheduleJob(this.shedule, this.do.bind(this));
 		super.start();
     }
 
-    stop(in_Params, in_Callback)
+    stop(inParams, onDone)
     {
         this._job.cancel();
         this._job = undefined;
@@ -30,4 +30,4 @@ class Email_Sheduled_Agent extends Email_Agent
     }
 };
 
-module.exports = Email_Sheduled_Agent;
+module.exports = EmailSheduledAgent;

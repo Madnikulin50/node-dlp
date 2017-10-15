@@ -4,15 +4,15 @@ var async = require('async');
 
 class Complex_Condition extends Base_Condition
 {
-    constructor(in_Options, in_Cb)
+    constructor(inOptions, in_Cb)
     {
-		super(in_Options, (err) => {
+		super(inOptions, (err) => {
 			if (err)
 				return in_Cb(err);
 			this.conditions = [];
-			if (in_Options.conditions)
+			if (inOptions.conditions)
 			{
-				async.each(in_Options.conditions, (cond_opt, callback) => {
+				async.each(inOptions.conditions, (cond_opt, callback) => {
 					creator(cond_opt, (err, result) => {
 						if (err)
 							return callback();
@@ -23,7 +23,7 @@ class Complex_Condition extends Base_Condition
 				(err) => {
 					in_Cb(null, this);
 				})
-				for (var cond_opt of in_Options)
+				for (var cond_opt of inOptions)
 				{
 					
 				}

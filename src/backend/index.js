@@ -9,37 +9,37 @@ var NNTP = require('./nntp');
 
 
 class Backend {
-  constructor(in_Options) {
+  constructor(inOptions) {
     this.app = express();
     this.app.use(bodyParser.json())
-    this.options = in_Options;
-    this.loadPlugins(in_Options);
+    this.options = inOptions;
+    this.loadPlugins(inOptions);
     this.start();
 
 
-    this.imap = new IMAP(in_Options);
-    this.nntp = new NNTP(in_Options);
+    this.imap = new IMAP(inOptions);
+    this.nntp = new NNTP(inOptions);
 
-    let backend_opts = this.options.backend;
-    if (backend_opts["telegram-key"]) {
+    let backendOpts = this.options.backend;
+    if (backendOpts["telegram-key"]) {
       this.telegram = new Telegram(this.options);
     }
   }
 
-  loadPlugins(in_Options) {
+  loadPlugins(inOptions) {
     const testFolder = path.join(__dirname, 'plugins');
     fs.readdirSync(testFolder).forEach(file => {
       var _plugin = require(path.join(testFolder, file));
-      _plugin(in_Options, this);
+      _plugin(inOptions, this);
     });
   }
 
   start() {
-    let backend_opts = this.options.backend;
+    let backendOpts = this.options.backend;
 
     this.app.use(express.static(path.join(__dirname, '../fronend')));
     
-    this.app.listen(backend_opts.portnum);
+    this.app.listen(backendOpts.portnum);
   }
 
 }

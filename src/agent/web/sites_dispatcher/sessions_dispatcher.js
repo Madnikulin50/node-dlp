@@ -6,19 +6,19 @@ class Sessions_Dispatcher
 		this._storage = [];
 	}
 
-	pushSession(in_Key, in_Value)
+	pushSession(in_Key, inValue)
 	{
 		this._storage.push({
 			key: in_Key,
-			value: in_Value 
+			value: inValue 
 		});
 	}
 
-	findSession(in_Key, in_CB)
+	findSession(in_Key, onDone)
 	{
 		let result;
-		if (in_CB)
-			in_CB(null, result);
+		if (onDone)
+			onDone(null, result);
 		return result;
 	}
 };

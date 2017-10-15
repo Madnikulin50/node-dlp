@@ -3,7 +3,7 @@ var Action = require('./index.js');
 class Block_Action extends Action
 {
 	
-	do(in_Env, in_Callback)
+	do(in_Env, onDone)
 	{
 		this.isSatisfying(in_Env, (err, result) => {
 			if (result)
@@ -12,7 +12,7 @@ class Block_Action extends Action
 				in_Env.result.block = true;
 				in_Env.result.blockReason = 'Blocked by action ' + (this.name !== undefined ? this.name : "(noname)"); 
 			}
-			in_Callback(err, result);
+			onDone(err, result);
 		});
 	}
 };

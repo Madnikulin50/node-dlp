@@ -3,9 +3,9 @@ var path = require('path');
 
 class Base_Dispatcher
 {
-	constructor(in_Options)
+	constructor(inOptions)
 	{
-		Object.assign(this, in_Options);
+		Object.assign(this, inOptions);
 	}
 
 	get priority() {
@@ -22,83 +22,79 @@ class Base_Dispatcher
 		return false;
 	}
 
-	fillCase(in_Params, in_Case)
+	fillCase(inParams, in_Case)
 	{
-		let packet = in_Params.packet;
+		let packet = inParams.packet;
 		in_Case.setParams({
-			service: in_Params.service || this.service,
+			service: inParams.service || this.service,
 			date: (new Date()).toUTCString(),
 			user: packet.user,
 			src_ip: packet.src_ip,
 			dst_host: packet.host,
 			channel: 'web',
-			agent: in_Params.agent.name,
+			agent: inParams.agent.name,
 			user_agent: packet.userAgent
 		});
 	}
 
-	createCase(in_Params)
+	createCase(inParams)
 	{
 		let new_case = new Case();
-		new_case.setFolder(path.join(in_Params.agent.audit_fld, new_case.id));
-		this.fillCase(in_Params, new_case);
+		new_case.setFolder(path.join(inParams.agent.audit_fld, new_case.id));
+		this.fillCase(inParams, new_case);
 		return new_case;
 	}
 
-	finishCase(in_Params, in_CB = (err) => { if (err) throw err; })
+	finishCase(inParams, onDone = (err) => { if (err) throw err; })
 	{
-		if (in_Params.agent !== undefined)
+		if (inParams.agent !== undefined)
 		{
-			return in_Params.agent.makeAudit(in_Params.case, in_CB);
+			return inParams.agent.makeAudit(inParams.case, onDone);
 		}
-		in_CB("Not set agent reference");
+		onDone("Not set agent reference");
 	}
 
-	finishCaseSimple(in_Params, in_Case, in_CB = (err) => { if (err) throw err; })
+	finishCaseSimple(inParams, in_Case, onDone = (err) => { if (err) throw err; })
 	{
-		let p = Object.assign({}, in_Params);
+		let p = Object.assign({}, inParams);
 		p.case = in_Case;
-		return this.finishCase(p, in_CB);
-	}
-	isMine(in_Packet)
-	{
-		return false;
+		return this.finishCase(p, onDone);
 	}
 
-	processDefaultPost(in_Params, in_CB)
+	processDefaultPost(inParams, onDone)
 	{
-		let cs = this.createCase(in_Params);
+		let cs = this.createCase(inParams);
 		let params = 
 		{
 			subject: "Default POST logging",
 		};
 		cs.setParams(params);
-		cs.setBody("TODO data", (err) => {
-			this.finishCaseSimple(in_Params, cs, in_CB);
+		cs.setBody("Default POST body", (err) => {
+			this.finishCaseSimple(inParams, cs, onDone);
 		});
 	}
 
-	process(in_Params, in_CB)
+	process(inParams, onDone)
 	{
-		let packet = in_Params.packet;
+		let packet = inParams.packet;
 		if (packet.isLikePost)
-			return this.processDefaultPost(in_Params, in_CB);
+			return this.processDefaultPost(inParams, onDone);
 		console.log('Unknown how process HTTP request ' + packet.method + ' ' + packet.host + packet.url);
 		return false;
 	}
 
-	createSearchCase(in_Params, in_Search, in_CB)
+	createSearchCase(inParams, in_Search, onDone)
 	{
-		let cs = this.createCase(in_Params);
+		let cs = this.createCase(inParams);
 		let params =
 		{
-			subject: in_Params.packet.query.bq === undefined ? "Search" : "Fast search",
+			subject: inParams.packet.query.bq === undefined ? "Search" : "Fast search",
 		};
 		cs.setParams(params);
 		cs.setBody(in_Search, err => {
-			this.finishCaseSimple(in_Params, cs, in_CB);
+			this.finishCaseSimple(inParams, cs, onDone);
 		});
 	}
-};
+}
 
 module.exports = Base_Dispatcher;

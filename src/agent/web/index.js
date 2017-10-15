@@ -7,12 +7,12 @@ var SiteGrabber = require('./site-grabber');
 
 class Web_Agent extends Agent
 {
-    constructor(in_Options)
+    constructor(inOptions)
     {
-		super(in_Options);
-		this.siteDispatcher = new Site_Dispatcher(in_Options);
-		if (in_Options.use_grabber === true)
-			this.siteGrabber = new SiteGrabber(in_Options);
+		super(inOptions);
+		this.siteDispatcher = new Site_Dispatcher(inOptions);
+		if (inOptions.use_grabber === true)
+			this.siteGrabber = new SiteGrabber(inOptions);
     }
 	start()
 	{

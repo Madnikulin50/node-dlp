@@ -6,9 +6,9 @@ class Google_Dispatcher extends Base_Dispatcher
 		return true;
 	}
 
-	constructor(in_Options)
+	constructor(inOptions)
 	{
-		super(in_Options);
+		super(inOptions);
 	}
 
 
@@ -36,15 +36,15 @@ class Google_Dispatcher extends Base_Dispatcher
 		return false;
 	}
 
-	process(in_Params, in_CB)
+	process(inParams, onDone)
 	{
-		let packet = in_Params.packet;
+		let packet = inParams.packet;
 		if (packet.isLikeGet)
 		{
 			if (packet.query.q !== undefined)
-				return super.createSearchCase(in_Params, packet.query.q, in_CB);
+				return super.createSearchCase(inParams, packet.query.q, onDone);
 		}
-		return super.process(in_Params, in_CB);
+		return super.process(inParams, onDone);
 	}
 };
 
