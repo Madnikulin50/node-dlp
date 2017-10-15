@@ -1,35 +1,27 @@
-var Base_Condition = require('./base.js');
+var BaseCondition = require('./base.js')
 
-class Contain_Condition extends Base_Condition
-{
-    constructor(inOptions, in_Cb)
-    {
-		super(inOptions, in_Cb);
-        this.mask = inOptions.mask;
-        this.field = inOptions.field;
-		in_Cb(null, this);
-    }
+class ContainCondition extends BaseCondition {
+  constructor (inOptions, onDone) {
+    super(inOptions, onDone)
+    this.mask = inOptions.mask
+    this.field = inOptions.field
+    onDone(null, this)
+  }
 
-    isSatisfied(in_Env, in_Cb)
-    {
-        for (let field of this.field)
-        {
-            let field_value  = in_Env.case.getField(field);
-            if (field_value === undefined)
-                continue;
-				
-            for (let mask of this.mask)
-            {
-                let regex = new RegExp(mask);
-                if (field_value.search(regex) != -1)
-                {
-                    return in_Cb(null, true);
-                }
-            }
-            
+  isSatisfied (inEnv, onDone) {
+    for (let field of this.field) {
+      let fieldValue = inEnv.case.getField(field)
+      if (fieldValue === undefined) { continue }
+
+      for (let mask of this.mask) {
+        let regex = new RegExp(mask)
+        if (fieldValue.search(regex) !== -1) {
+          return onDone(null, true)
         }
-        return in_Cb(null, false);
+      }
     }
+    return onDone(null, false)
+  }
 }
 
-module.exports = Contain_Condition;
+module.exports = ContainCondition

@@ -1,29 +1,24 @@
 
-class Analyse_Log
-{
-	constructor()
-	{
-		this.elems = [];
-	}
-	pushText(in_String)
-	{
-		this.push(in_String);
-	}
+class AnalyseLog {
+  constructor () {
+    this.elems = []
+  }
+  pushText (inString) {
+    this.push(inString)
+  }
 
-	pushPolicyApply(in_Policy, in_Condition, in_Info)
-	{
-		this.push({
-			text: "Apply police" + in_Policy + " by condition " + in_Condition,
-			policy: in_Policy, 
-			condition: in_Condition, 
-			info: in_Info
-		})
-	}
+  pushPolicyApply (inPolicy, inCondition, inInfo) {
+    this.push({
+      text: 'Apply police' + inPolicy + ' by condition ' + inCondition,
+      policy: inPolicy,
+      condition: inCondition,
+      info: inInfo
+    })
+  }
 
-	push(in_Elem)
-	{
-		this.elems(in_Elem);
-	}
+  push (inElem) {
+    this.elems(inElem)
+  }
 };
 
-module.exports = Analyse_Log;
+module.exports = AnalyseLog

@@ -1,11 +1,8 @@
 
-class Base_Packet
-{
-
-	constructor()
-	{
-		this.isFull = false;
-	}
+class BasePacket {
+  constructor () {
+    this.isFull = false
+  }
 };
 
-module.exports = Base_Packet;
+module.exports = BasePacket

@@ -1,21 +1,13 @@
-var Base_Dispatcher = require('../base.js');
+var BaseDispatcher = require('../base.js')
 
-class Facebook_Dispatcher extends Base_Dispatcher
-{
-	static get IS_DISPATCHER() {
-		return true;
-	}
+class FacebookDispatcher extends BaseDispatcher {
+  static get IS_DISPATCHER () {
+    return true
+  }
 
-	constructor(inOptions)
-	{
-		super(inOptions);
-	}
-
-	get service()
-	{
-		return 'Facebook';
-	}
-
+  get service () {
+    return 'Facebook'
+  }
 };
 
-module.exports = Facebook_Dispatcher;
+module.exports = FacebookDispatcher

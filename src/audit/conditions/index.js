@@ -1,10 +1,7 @@
 
-
-module.exports = function(inOptions, in_Cb)
-{
-	var type = inOptions.type;
-	var cls = require('./' + type);
-	if (!cls)
-		in_Cb('Undefined condition type ' + type, null);
-	return new cls(inOptions, in_Cb);
+module.exports = function (inOptions, onDone) {
+  const type = inOptions.type
+  const Class = require('./' + type)
+  if (!Class) { onDone('Undefined condition type ' + type, null) }
+  return new Class(inOptions, onDone)
 }

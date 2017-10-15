@@ -4,7 +4,7 @@ module.exports = function (inOptions, inBackend) {
   let app = inBackend.app
   let storeAllOptions = inOptions.store
   var storeOptions = storeAllOptions[storeAllOptions.active]
-  var store = storeLoader(storeOptions,
+  storeLoader(storeOptions,
     (err, store) => {
       if (err) { throw err }
 
@@ -73,11 +73,11 @@ module.exports = function (inOptions, inBackend) {
 
       app.get('/api/enum-labels', (req, res) => {
         var labels = [
-          { name: 'Incident', color: 'warning'},
-          { name: 'Leak', color: 'danger'},
-          { name: 'News', color: 'success'},
-          { name: 'Advertising', color: 'success'},
-          { name: 'Spam', color: 'success'}
+          { name: 'Incident', color: 'warning' },
+          { name: 'Leak', color: 'danger' },
+          { name: 'News', color: 'success' },
+          { name: 'Advertising', color: 'success' },
+          { name: 'Spam', color: 'success' }
         ]
         res.json(labels)
       })

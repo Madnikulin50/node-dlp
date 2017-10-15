@@ -1,47 +1,33 @@
-var Base_Dispatcher = require('../base.js');
+var BaseDispatcher = require('../base.js')
 
-class Common_Dispatcher extends Base_Dispatcher
-{
-	static get IS_DISPATCHER() {
-		return true;
-	}
+class CommonDispatcher extends BaseDispatcher {
+  static get IS_DISPATCHER () {
+    return true
+  }
 
-	get priority() {
-		return 255;
-	}
+  get priority () {
+    return 255
+  }
 
-	constructor(inOptions)
-	{
-		super(inOptions);
-	}
+  get service () {
+    return 'Common'
+  }
 
-
-	get service()
-	{
-		return 'Common';
-	}
-
-	isMine(in_Packet)
-	{
-		if (in_Packet.isLikePost)
-			return true;
-		if (in_Packet.isLikeGet)
-		{
-			let url = in_Packet.url;
-			const _interestingGetUrlMasks = 
-			[
-				's=', 'search=', 'q=', 'bq='
-			];
-			for (var i in _interestingGetUrlMasks)
-			{
-				if (url.indexOf(_interestingGetUrlMasks[i]) !== -1)
-					return true;
-			}
-			return false;
-		}
-		return false;
-	}
-
+  isMine (inPacket) {
+    if (inPacket.isLikePost) { return true }
+    if (inPacket.isLikeGet) {
+      let url = inPacket.url
+      const _interestingGetUrlMasks =
+   [
+     's=', 'search=', 'q=', 'bq='
+   ]
+      for (var i in _interestingGetUrlMasks) {
+        if (url.indexOf(_interestingGetUrlMasks[i]) !== -1) { return true }
+      }
+      return false
+    }
+    return false
+  }
 };
 
-module.exports = Common_Dispatcher;
+module.exports = CommonDispatcher

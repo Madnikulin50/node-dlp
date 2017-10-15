@@ -1,9 +1,7 @@
-var Base_Packet = require('./base.js');
+var BasePacket = require('./base.js')
 
-
-class Files_Packet extends Base_Packet
-{
+class FilesPacket extends BasePacket {
 
 };
 
-module.exports = Files_Packet;
+module.exports = FilesPacket

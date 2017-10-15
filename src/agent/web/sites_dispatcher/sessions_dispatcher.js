@@ -1,26 +1,21 @@
 
-class Sessions_Dispatcher
-{
-	constructor()
-	{
-		this._storage = [];
-	}
+class SessionsDispatcher {
+  constructor () {
+    this._storage = []
+  }
 
-	pushSession(in_Key, inValue)
-	{
-		this._storage.push({
-			key: in_Key,
-			value: inValue 
-		});
-	}
+  pushSession (inKey, inValue) {
+    this._storage.push({
+      key: inKey,
+      value: inValue
+    })
+  }
 
-	findSession(in_Key, onDone)
-	{
-		let result;
-		if (onDone)
-			onDone(null, result);
-		return result;
-	}
+  findSession (inKey, onDone) {
+    let result
+    if (onDone) { onDone(null, result) }
+    return result
+  }
 };
 
-module.exports = Sessions_Dispatcher;
+module.exports = SessionsDispatcher

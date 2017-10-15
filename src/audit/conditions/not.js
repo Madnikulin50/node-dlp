@@ -1,34 +1,26 @@
-var Base_Condition = require('./base');
-var creator = require('./index.js');
+var BaseCondition = require('./base')
+var creator = require('./index.js')
 
-class Not_Condition extends Base_Condition
-{
-    constructor(inOptions, in_Cb)
-    {
-		super(inOptions, in_Cb);
-		creator(inOptions.condition, (err, result) => {
-			if (err)
-				return in_Cb(err);
-			this.condition = result;
-			in_Cb(null, this);
-		});
+class NotCondition extends BaseCondition {
+  constructor (inOptions, onDone) {
+    super(inOptions, onDone)
+    creator(inOptions.condition, (err, result) => {
+      if (err) { return onDone(err) }
+      this.condition = result
+      onDone(null, this)
+    })
+  }
 
-    }    
-    
-    isSatisfied(in_Env, in_Cb)
-    {
-        return this.condition.isSatisfied(in_Env, (err, result) => {
-			if (err)
-				return in_Cb(err, result);
-			return in_Cb(err, !result);
-		});
-    }
+  isSatisfied (inEnv, onDone) {
+    return this.condition.isSatisfied(inEnv, (err, result) => {
+      if (err) { return onDone(err, result) }
+      return onDone(err, !result)
+    })
+  }
 
-    executeOnDB()
-    {
-        
-    }
+  executeOnDB () {
 
+  }
 };
 
-module.exports = Not_Condition;
+module.exports = NotCondition

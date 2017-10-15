@@ -1,9 +1,10 @@
-var EmailSheduledAgent = require('../sheduled.js')
-var path = require('path')
-var fs = require('fs'), fileStream
-var Imap = require('imap'), inspect = require('util').inspect
+const EmailSheduledAgent = require('../sheduled.js')
+const path = require('path')
+const fs = require('fs')
+const Imap = require('imap')
+const inspect = require('util').inspect
 
-class Email_Sheduled_Agent extends EmailSheduledAgent {
+class Imap4Agent extends EmailSheduledAgent {
   constructor (inOptions) {
     super(inOptions)
     Object.assign(this, inOptions)
@@ -26,22 +27,22 @@ class Email_Sheduled_Agent extends EmailSheduledAgent {
       })
     imap.once('ready', function () {
       imap.openBox('INBOX', true, function (err, box) {
-  				if (err) { throw err}
+        if (err) { throw err }
         imap.search([ 'UNSEEN', ['SINCE', 'May 20, 2010'] ], function (err, results) {
-    				if (err) { throw err}
-    				var f = imap.fetch(results, { bodies: '' })
-    				f.on('message', function (msg, seqno) {
-      					console.log('Message #%d', seqno)
-      					var prefix = '(#' + seqno + ') '
-      					msg.on('body', function (stream, info) {
+          if (err) { throw err }
+          var f = imap.fetch(results, { bodies: '' })
+          f.on('message', function (msg, seqno) {
+            console.log('Message #%d', seqno)
+            var prefix = '(#' + seqno + ') '
+            msg.on('body', function (stream, info) {
               console.log(prefix + 'Body')
               let fn = path.join(this.tmp_fld, 'msg-' + seqno + '-body.eml')
-              let write_stream = fs.createWriteStream(fn)
-              write_stream.write('X-Node-DLP-Agent:IMAP4\r\n')
-              write_stream.on('close', function () {
+              let writeStream = fs.createWriteStream(fn)
+              writeStream.write('X-Node-DLP-Agent:IMAP4\r\n')
+              writeStream.on('close', function () {
                 this.makeCaseFromEml(fn)
               }.bind(this))
-              stream.pipe(write_stream)
+              stream.pipe(writeStream)
             }.bind(this))
             msg.once('attributes', function (attrs) {
               console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8))
@@ -72,4 +73,4 @@ class Email_Sheduled_Agent extends EmailSheduledAgent {
   }
 };
 
-module.exports = IMAP4_Agent
+module.exports = Imap4Agent

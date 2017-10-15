@@ -5,10 +5,10 @@ var md5 = require('md5')
 
 const tools = require('../tools')
 
-const params_fn = '.params'
-const body_fn = '.body'
-const attachments_fld = '.att'
-const attchments_texts_fld = '.att_text'
+const paramsFilename = '.params'
+const bodyFilename = '.body'
+const attachmentsField = '.att'
+const attachmentsTextField = '.att_text'
 
 class Case {
   constructor () {
@@ -35,25 +35,25 @@ class Case {
   getField (inField) {
     let val = this[inField]
     if (val !== undefined) { return val }
-    if (inField === 'body') { return fs.readFileSync(path.join(this._folder, body_fn), 'utf8') }
+    if (inField === 'body') { return fs.readFileSync(path.join(this._folder, bodyFilename), 'utf8') }
     return undefined
   }
 
-  pushRule (in_Rule) {
-    this.rules.push(in_Rule)
-    storeParams()
+  pushRule (inRule) {
+    this.rules.push(inRule)
+    return this.storeParams()
   }
 
-  isRulePresent (in_Rule) {
-    return this.rules.indexOf(in_Rule) !== -1
+  isRulePresent (inRule) {
+    return this.rules.indexOf(inRule) !== -1
   }
 
   storeParams () {
-    fs.writeFile(path.join(this._folder, params_fn), JSON.stringify(this, '\t'), 'utf8')
+    fs.writeFile(path.join(this._folder, paramsFilename), JSON.stringify(this, '\t'), 'utf8')
   }
 
   loadParams (onDone) {
-    fs.readFile(path.join(this._folder, params_fn), 'utf8', (err, data) => {
+    fs.readFile(path.join(this._folder, paramsFilename), 'utf8', (err, data) => {
       if (err) { return onDone(err) }
       try {
         let params = JSON.parse(data)
@@ -77,21 +77,21 @@ class Case {
     this.storeParams()
   }
 
-  setFolder (in_Folder) {
-    this._folder = in_Folder
+  setFolder (inFolder) {
+    this._folder = inFolder
     if (!fs.existsSync(this._folder)) { fs.mkdirSync(this._folder) }
   }
 
-  setBody (in_String, onDone) {
-    fs.writeFile(path.join(this._folder, body_fn), in_String, 'utf8', onDone)
+  setBody (inString, onDone) {
+    fs.writeFile(path.join(this._folder, bodyFilename), inString, 'utf8', onDone)
   }
 
-  getEncodedBody (in_Encoding, onDone) {
-    fs.readFile(path.join(this._folder, body_fn), in_Encoding, onDone)
+  getEncodedBody (inEncoding, onDone) {
+    fs.readFile(path.join(this._folder, bodyFilename), inEncoding, onDone)
   }
 
   getBody (onDone) {
-    fs.readFile(path.join(this._folder, body_fn), onDone)
+    fs.readFile(path.join(this._folder, bodyFilename), onDone)
   }
 
   calcMD5 () {
@@ -100,35 +100,35 @@ class Case {
   }
 
   hasBodyStream () {
-    return fs.existsSync(path.join(this._folder, body_fn))
+    return fs.existsSync(path.join(this._folder, bodyFilename))
   }
 
   getBodyStream () {
-    return fs.createReadStream(path.join(this._folder, body_fn))
+    return fs.createReadStream(path.join(this._folder, bodyFilename))
   }
 
   getAttachments (onDone) {
-    fs.readdir(path.join(this._folder, attachments_fld), (err, files) => {
+    fs.readdir(path.join(this._folder, attachmentsField), (err, files) => {
       if (err) { return onDone(null, []) }
       return onDone(err, files)
     })
   }
 
-  getAttachmentStream (in_Filename) {
-    return fs.createReadStream(path.join(path.join(this._folder, attachments_fld), in_Filename))
+  getAttachmentStream (inFilename) {
+    return fs.createReadStream(path.join(path.join(this._folder, attachmentsField), inFilename))
   }
 
-  pushAttachment (inPath, in_Filename, onDone) {
-    this.ensureFolder(path.join(this._folder, attachments_fld), (err) => {
+  pushAttachment (inPath, inFilename, onDone) {
+    this.ensureFolder(path.join(this._folder, attachmentsField), (err) => {
       if (err) { return onDone(err) }
-      fs.writeFile(path.join(this._folder, attachments_fld, in_Filename), fs.createReadStream(inPath), onDone)
+      fs.writeFile(path.join(this._folder, attachmentsField, inFilename), fs.createReadStream(inPath), onDone)
     })
   }
 
-  pushAttachmentFromBuffer (in_Filename, in_Buffer, onDone = (err) => { if (err) console.log(err) }) {
-    this.ensureFolder(path.join(this._folder, attachments_fld), (err) => {
+  pushAttachmentFromBuffer (inFilename, inBuffer, onDone = (err) => { if (err) console.log(err) }) {
+    this.ensureFolder(path.join(this._folder, attachmentsField), (err) => {
       if (err) { return onDone(err) }
-      fs.writeFile(path.join(this._folder, attachments_fld, in_Filename), in_Buffer, onDone)
+      fs.writeFile(path.join(this._folder, attachmentsField, inFilename), inBuffer, onDone)
     })
   }
 

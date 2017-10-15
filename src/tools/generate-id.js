@@ -1,5 +1,5 @@
-var crypto = require('crypto');
+var crypto = require('crypto')
 
 module.exports = function () {
-  return crypto.randomBytes(48).toString('hex');
-};
+  return crypto.randomBytes(48).toString('hex')
+}
