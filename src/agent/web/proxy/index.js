@@ -36,7 +36,7 @@ class ProxyAgent extends WebAgent {
           packet: packet,
           agent: this
         }, (err) => {
-          if (err) { return callback(err) }
+          if (err) { console.log(err) }
         })
       }
 

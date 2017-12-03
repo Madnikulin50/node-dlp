@@ -17,7 +17,7 @@ class DataPacket extends BasePacket {
     return this._data.incomingMessage.method
   }
   get host () {
-    return this._data.incomingMessage.headers.host
+    return this._data.incomingMessage.headers.Host || this._data.incomingMessage.headers.host
   }
   get protocol () {
     return 'http'
@@ -42,7 +42,7 @@ class DataPacket extends BasePacket {
   }
 
   get url () {
-    return this._data.incomingMessage.url
+    return this._data.incomingMessage.url || this._data.incomingMessage.uri || '/'
   }
 
   get query () {
