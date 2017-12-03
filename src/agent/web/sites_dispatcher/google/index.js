@@ -1,51 +1,34 @@
-var Base_Dispatcher = require('../base.js');
+var BaseDispatcher = require('../base.js')
 
-class Google_Dispatcher extends Base_Dispatcher
-{
-	static get IS_DISPATCHER() {
-		return true;
-	}
+class GoogleDispatcher extends BaseDispatcher {
+  static get IS_DISPATCHER () {
+    return true
+  }
 
-	constructor(in_Options)
-	{
-		super(in_Options);
-	}
+  get service () {
+    return 'Google'
+  }
 
+  isMine (inPacket) {
+    let host = inPacket.host
+    if (host.indexOf('google.') === -1) { return false }
 
-	get service()
-	{
-		return 'Google';
-	}
+    if (inPacket.isLikePost) { return true }
 
-	isMine(in_Packet)
-	{
-		
-		let host = in_Packet.host;
-		if (host.indexOf('google.') === -1)
-			return false;
+    if (inPacket.isLikeGet) {
+      if (inPacket.query.q !== undefined &&
+    inPacket.pathName.indexOf('/search') !== -1) { return true }
+    }
+    return false
+  }
 
-		if (in_Packet.isLikePost)
-			return true;
-
-		if (in_Packet.isLikeGet)
-		{
-			if (in_Packet.query.q !== undefined &&
-				in_Packet.pathName.indexOf('/search') !== -1)
-				return true;
-		}
-		return false;
-	}
-
-	process(in_Params, in_CB)
-	{
-		let packet = in_Params.packet;
-		if (packet.isLikeGet)
-		{
-			if (packet.query.q !== undefined)
-				return super.createSearchCase(in_Params, packet.query.q, in_CB);
-		}
-		return super.process(in_Params, in_CB);
-	}
+  process (inParams, onDone) {
+    let packet = inParams.packet
+    if (packet.isLikeGet) {
+      if (packet.query.q !== undefined) { return super.createSearchCase(inParams, packet.query.q, onDone) }
+    }
+    return super.process(inParams, onDone)
+  }
 };
 
-module.exports = Google_Dispatcher;
+module.exports = GoogleDispatcher

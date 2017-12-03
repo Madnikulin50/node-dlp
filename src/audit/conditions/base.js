@@ -1,20 +1,16 @@
 
-class Base_Condition
-{
-	constructor(in_Options, in_Cb)
-	{
-		Object.assign(this, in_Options);
-	}
+class BaseCondition {
+  constructor (inOptions, onDone) {
+    Object.assign(this, inOptions)
+  }
 
-	isSatisfied(in_Env, in_Cb)
-    {
-        return in_Cb(null, true);
-    }
+  isSatisfied (inEnv, onDone) {
+    return onDone(null, true)
+  }
 
-	executeOnDB()
-    {
-        
-    }
+  executeOnDB () {
+
+  }
 };
 
-module.exports = Base_Condition;
+module.exports = BaseCondition

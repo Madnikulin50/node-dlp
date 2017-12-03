@@ -1,11 +1,9 @@
-var Notify_Action = require('./notify.js');
+var NotifyAction = require('./notify.js')
 
-class EMail_Action extends Notify_Action
-{
-	doAfterAll(in_Case, in_Callback)
-	{
-		return super.doAfterAll(in_Case, in_Callback);
-	}
+class EMailAction extends NotifyAction {
+  doAfterAll (inCase, onDone) {
+    return super.doAfterAll(inCase, onDone)
+  }
 };
 
-module.exports = EMail_Action;
+module.exports = EMailAction

@@ -1,53 +1,35 @@
-var Base_Dispatcher = require('../base.js');
+var BaseDispatcher = require('../base.js')
 
-class Yandex_Dispatcher extends Base_Dispatcher
-{
-	static get IS_DISPATCHER() {
-		return true;
-	}
+class YandexDispatcher extends BaseDispatcher {
+  static get IS_DISPATCHER () {
+    return true
+  }
 
-	constructor(in_Options)
-	{
-		super(in_Options);
-	}
+  get service () {
+    return 'Yandex'
+  }
 
-	get service()
-	{
-		return 'Yandex';
-	}
+  isMine (inPacket) {
+    let host = inPacket.host
+    if (host.indexOf('yandex.ru') === -1) { return false }
 
-	isMine(in_Packet)
-	{
-		
-		let host = in_Packet.host;
-		if (host.indexOf('yandex.ru') === -1)
-			return false;
+    if (inPacket.isLikePost) { return true }
 
-		if (in_Packet.isLikePost)
-			return true;
+    if (inPacket.isLikeGet) {
+      if (inPacket.query.q !== undefined &&
+    inPacket.pathName === '/search/') { return true }
+      if (inPacket.query.text !== undefined) { return true }
+    }
+    return false
+  }
 
-		if (in_Packet.isLikeGet)
-		{
-			if (in_Packet.query.q !== undefined &&
-				in_Packet.pathName === '/search/')
-				return true;
-			if (in_Packet.query.text !== undefined)
-				return true;
-		}
-		return false;
-	}
-
-	process(in_Params, in_CB)
-	{
-		let packet = in_Params.packet;
-		if (packet.isLikeGet)
-		{
-			if (packet.query.text !== undefined)
-				return super.createSearchCase(in_Params, packet.query.text, in_CB);
-		}
-		return super.process(in_Params, in_CB);
-	}
-
+  process (inParams, onDone) {
+    let packet = inParams.packet
+    if (packet.isLikeGet) {
+      if (packet.query.text !== undefined) { return super.createSearchCase(inParams, packet.query.text, onDone) }
+    }
+    return super.process(inParams, onDone)
+  }
 };
 
-module.exports = Yandex_Dispatcher;
+module.exports = YandexDispatcher

@@ -1,8 +1,7 @@
-var After_All_Action = require('../after-all.js');
+var AfterAllAction = require('../after-all.js')
 
-class Notify_Action extends After_All_Action
-{
+class NotifyAction extends AfterAllAction {
 
 };
 
-module.exports = Notify_Action;
+module.exports = NotifyAction

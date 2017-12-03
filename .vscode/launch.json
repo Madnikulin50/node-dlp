@@ -10,7 +10,10 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
             "name": "node-dlp",
-            "program": "${workspaceRoot}/src/index.js"
+			"program": "${workspaceRoot}/src/index.js",
+			"env": {
+				"DEBUG":"nntp-server.*"
+			}
 		},
 		{
 			"type": "node",
@@ -19,7 +22,8 @@
 			"program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
 			"args": ["${workspaceRoot}/test/agent/web/site-grabber/index.js"],
 			"env": {
-				"$PATH":"$PATH;${workspaceRoot}/node_modules/.bin"
+				"$PATH":"$PATH;${workspaceRoot}/node_modules/.bin",
+				"DEBUG":"nntp-server.*"
 			}
 			
 		}

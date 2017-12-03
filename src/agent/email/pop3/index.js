@@ -1,22 +1,17 @@
-var Email_Sheduled_Agent = require('../sheduled.js');
+var EmailSheduledAgent = require('../sheduled.js')
 
+class Pop3Agent extends EmailSheduledAgent {
+  constructor (inOptions) {
+    super(inOptions)
+    Object.assign(this, inOptions)
+  }
+  get name () {
+    return 'pop3'
+  }
 
-class POP3_Agent extends Email_Sheduled_Agent
-{
-    constructor(in_Options)
-    {
-        super(in_Options);
-        Object.assign(this, in_Options);
-    }
-	get name() {
-		return 'pop3';
-	}
-
-    do()
-    {
-        console.log("Starting POP3 task\nserver - " + this.server + ":" + this.port +  (this.tls ? 'tls' : 'plain') + "\nuser - " + this.user);
-        
-    }
+  do () {
+    console.log('Starting POP3 task\nserver - ' + this.server + ':' + this.port + (this.tls ? 'tls' : 'plain') + '\nuser - ' + this.user)
+  }
 };
 
-module.exports = POP3_Agent;
+module.exports = Pop3Agent

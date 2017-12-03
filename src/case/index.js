@@ -1,120 +1,142 @@
-var fs = require('fs');
-var path = require('path');
-var crypto = require('crypto');
-var md5 = require('md5');
+var fs = require('fs')
+var path = require('path')
+var crypto = require('crypto')
+var md5 = require('md5')
 
-const params_fn = '.params';
-const body_fn = '.body';
-const attachments_fld = '.att';
-const attchments_texts_fld = '.att_text';
+const tools = require('../tools')
 
-class Case
-{
-    constructor()
-    {
-        this.channel = 'undefined';
-        this.agent = 'undefined';
-		this.id = crypto.randomBytes(48).toString('hex');
-    }
+const paramsFilename = '.params'
+const bodyFilename = '.body'
+const attachmentsField = '.att'
+const attachmentsTextField = '.att_text'
 
-    static load(in_Path)
-    {
+class Case {
+  constructor () {
+    this.channel = 'undefined'
+    this.agent = 'undefined'
+    this.id = crypto.randomBytes(48).toString('hex')
+  }
 
-    }
+  static fromCatalog (inPath, onDone) {
+    let cs = new Case()
+    cs._folder = inPath
+    cs.loadParams((err) => {
+      if (err) { return onDone(err) }
+      return onDone(null, cs)
+    })
+  }
 
-    getField(in_Field)
-    {
-		let val = this[in_Field];
-        if (val !== undefined)
-            return val;
-        if (in_Field === 'body')
-            return fs.readFileSync(path.join(this._folder, body_fn), 'utf8');
-        return undefined;
-    }
+  clean (onDone = (err) => { if (err) console.log(err) }) {
+    return tools.unlinkFolder(this._folder, (err) => {
+      onDone(err)
+    })
+  }
 
-    pushRule(in_Rule)
-    {
-        this.rules.push(in_Rule);
-        storeParams();
-    }
+  getField (inField) {
+    let val = this[inField]
+    if (val !== undefined) { return val }
+    if (inField === 'body') { return fs.readFileSync(path.join(this._folder, bodyFilename), 'utf8') }
+    return undefined
+  }
 
-	isRulePresent(in_Rule)
-	{
-		return this.rules.indexOf(in_Rule) !== -1;
-	}
+  pushRule (inRule) {
+    this.rules.push(inRule)
+    return this.storeParams()
+  }
 
-    storeParams()
-    {
-        fs.writeFile(path.join(this._folder, params_fn), JSON.stringify(this, '\t'), 'utf8');
-    }
+  isRulePresent (inRule) {
+    return this.rules.indexOf(inRule) !== -1
+  }
 
-	getParams()
-	{
-		
-	}
+  storeParams () {
+    fs.writeFile(path.join(this._folder, paramsFilename), JSON.stringify(this, '\t'), 'utf8')
+  }
 
+  loadParams (onDone) {
+    fs.readFile(path.join(this._folder, paramsFilename), 'utf8', (err, data) => {
+      if (err) { return onDone(err) }
+      try {
+        let params = JSON.parse(data)
+        this.channel = undefined
+        this.agent = undefined
+        this.id = undefined
+        Object.assign(this, params)
+        return onDone()
+      } catch (error) {
+        return onDone(err)
+      }
+    })
+  }
 
-    setParams(in_Params)
-    {
-        Object.assign(this, in_Params);
-        this.storeParams();
-    } 
+  getParams () {
+    return this
+  }
 
-    setFolder(in_Folder)
-    {
-        this._folder = in_Folder;
-        if (!fs.existsSync(this._folder))
-            fs.mkdirSync(this._folder);
-    }
+  setParams (inParams) {
+    Object.assign(this, inParams)
+    this.storeParams()
+  }
 
-    setBody(in_String, in_Callback)
-    {
-        fs.writeFile(path.join(this._folder, body_fn), in_String, 'utf8', in_Callback);
-    }
+  setFolder (inFolder) {
+    this._folder = inFolder
+    if (!fs.existsSync(this._folder)) { fs.mkdirSync(this._folder) }
+  }
 
-	getEncodedBody(in_Encoding, in_Callback)
-    {
-        fs.readFile(path.join(this._folder, body_fn), in_Encoding, in_Callback);
-    }
+  setBody (inString, onDone) {
+    fs.writeFile(path.join(this._folder, bodyFilename), inString, 'utf8', onDone)
+  }
 
-    getBody(in_Callback)
-    {
-        fs.readFile(path.join(this._folder, body_fn), in_Callback);
-    }
+  getEncodedBody (inEncoding, onDone) {
+    fs.readFile(path.join(this._folder, bodyFilename), inEncoding, onDone)
+  }
 
+  getBody (onDone) {
+    fs.readFile(path.join(this._folder, bodyFilename), onDone)
+  }
 
-	calcMD5()
-	{
-		let buf = JSON.stringify(this);
-		return md5(buf);
-	}
+  calcMD5 () {
+    let buf = JSON.stringify(this)
+    return md5(buf)
+  }
 
-	hasBodyStream()
-	{
-		return fs.existsSync(path.join(this._folder, body_fn));
-	}
-	
+  hasBodyStream () {
+    return fs.existsSync(path.join(this._folder, bodyFilename))
+  }
 
-	getBodyStream()
-	{
-		return fs.createReadStream(path.join(this._folder, body_fn));
-	}
+  getBodyStream () {
+    return fs.createReadStream(path.join(this._folder, bodyFilename))
+  }
 
-    pushAttachment(in_Path, in_Filename, in_Callback)
-    {
-        this.ensureFolder(path.join(this._folder, attachments_fld), (err) =>
-        {
-            if (err)
-                return in_Callback(err);
-            fs.writeFile(path.join(this._folder, attachments_fld, in_Filename), fs.createReadStream(in_Path), in_Callback);
-        });
-    }
+  getAttachments (onDone) {
+    fs.readdir(path.join(this._folder, attachmentsField), (err, files) => {
+      if (err) { return onDone(null, []) }
+      return onDone(err, files)
+    })
+  }
 
-    ensureFolder(in_Path, in_Callback)
-    {
-        fs.exists(in_Path, (exists) => { exists ? in_Callback(null) : fs.mkdir(in_Path, in_Callback)});
-    }
-};
+  getAttachmentStream (inFilename) {
+    return fs.createReadStream(path.join(path.join(this._folder, attachmentsField), inFilename))
+  }
 
+  pushAttachment (inPath, inFilename, onDone) {
+    this.ensureFolder(path.join(this._folder, attachmentsField), (err) => {
+      if (err) { return onDone(err) }
+      fs.writeFile(path.join(this._folder, attachmentsField, inFilename), fs.createReadStream(inPath), onDone)
+    })
+  }
 
-module.exports = Case;
+  pushAttachmentFromBuffer (inFilename, inBuffer, onDone = (err) => { if (err) console.log(err) }) {
+    this.ensureFolder(path.join(this._folder, attachmentsField), (err) => {
+      if (err) { return onDone(err) }
+      fs.writeFile(path.join(this._folder, attachmentsField, inFilename), inBuffer, onDone)
+    })
+  }
+
+  ensureFolder (inPath, onDone) {
+    fs.exists(inPath, (exists) => {
+      exists ? onDone(null) : fs.mkdir(inPath, onDone)
+    })
+  }
+}
+
+module.exports = Case

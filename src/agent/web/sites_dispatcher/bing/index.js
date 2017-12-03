@@ -1,53 +1,35 @@
-var Base_Dispatcher = require('../base.js');
+var BaseDispatcher = require('../base.js')
 
-class Bing_Dispatcher extends Base_Dispatcher
-{
+class BingDispatcher extends BaseDispatcher {
+  static get IS_DISPATCHER () {
+    return true
+  }
 
-	static get IS_DISPATCHER() {
-		return true;
-	}
+  get service () {
+    return 'Bing'
+  }
 
-	constructor(in_Options)
-	{
-		super(in_Options);
-	}
+  isMine (inPacket) {
+    let host = inPacket.host
+    if (host.indexOf('.bing.') === -1) { return false }
+    if (inPacket.isLikePost) { return true }
 
-	get service()
-	{
-		return 'Bing';
-	}
+    if (inPacket.isLikeGet) {
+      if (inPacket.pathName === '/search' &&
+    (inPacket.query.q !== undefined ||
+    inPacket.query.bq !== undefined)) { return true }
+    }
+    return false
+  }
 
-	isMine(in_Packet)
-	{
-		let host = in_Packet.host;
-		if (host.indexOf('.bing.') === -1)
-			return false;
-		if (in_Packet.isLikePost)
-			return true;
-		
-		if (in_Packet.isLikeGet)
-		{
-			if (in_Packet.pathName === '/search' &&
-				(in_Packet.query.q !== undefined ||
-				in_Packet.query.bq !== undefined))
-				return true;
-		}
-		return false;
-	}
-
-	process(in_Params, in_CB)
-	{
-		let packet = in_Params.packet;
-		if (packet.isLikeGet)
-		{
-			if (packet.query.q !== undefined)
-				return super.createSearchCase(in_Params, packet.query.q, in_CB);
-			if (packet.query.bq !== undefined)
-				return super.createSearchCase(in_Params, packet.query.bq, in_CB);
-		}
-		return super.process(in_Params, in_CB);
-	}
+  process (inParams, onDone) {
+    let packet = inParams.packet
+    if (packet.isLikeGet) {
+      if (packet.query.q !== undefined) { return super.createSearchCase(inParams, packet.query.q, onDone) }
+      if (packet.query.bq !== undefined) { return super.createSearchCase(inParams, packet.query.bq, onDone) }
+    }
+    return super.process(inParams, onDone)
+  }
 };
 
-module.exports = Bing_Dispatcher;
-
+module.exports = BingDispatcher

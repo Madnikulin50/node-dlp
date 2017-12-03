@@ -1,16 +1,12 @@
 
-class Base_Store_Dispatcher
-{
-	constructor(in_Options)
-	{
-		Object.assign(this, in_Options);
-	}
+class BaseStoreDispatcher {
+  constructor (inOptions) {
+    Object.assign(this, inOptions)
+  }
 
-	start(in_Params, in_CB)
-	{
-		in_CB(null, this);
-	}
-
+  start (inParams, onDone) {
+    onDone(null, this)
+  }
 };
 
-module.exports = Base_Store_Dispatcher;
+module.exports = BaseStoreDispatcher
